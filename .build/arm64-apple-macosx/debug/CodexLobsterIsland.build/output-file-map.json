@@ -1,0 +1,243 @@
+{
+  "": {
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/master.swiftdeps"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/App/AppBootstrap.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppBootstrap.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppBootstrap.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppBootstrap~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppBootstrap.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppBootstrap.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/App/AppDependencies.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppDependencies.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppDependencies.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppDependencies~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppDependencies.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppDependencies.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/App/CodexLobsterIslandApp.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLobsterIslandApp.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLobsterIslandApp.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLobsterIslandApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLobsterIslandApp.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLobsterIslandApp.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/AppSettings.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppSettings.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppSettings.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppSettings~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppSettings.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppSettings.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexProviderKind.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderKind.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderKind.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderKind~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderKind.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderKind.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexState.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexState.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexState.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexState~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexState.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexState.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexStatusProviding.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusProviding.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusProviding.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusProviding~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusProviding.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusProviding.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexTask.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexTask.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexTask.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexTask~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexTask.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexTask.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/StatusHistoryEntry.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusHistoryEntry.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusHistoryEntry.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusHistoryEntry~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusHistoryEntry.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusHistoryEntry.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Helpers/AppConstants.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppConstants.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppConstants.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppConstants~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppConstants.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppConstants.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Helpers/DateFormatter+Relative.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/DateFormatter+Relative.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/DateFormatter+Relative.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/DateFormatter+Relative~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/DateFormatter+Relative.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/DateFormatter+Relative.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexProviderFactory.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexStatusService.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusService.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusService.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusService~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusService.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusService.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/FloatingIslandWindowManager.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandWindowManager.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandWindowManager.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandWindowManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandWindowManager.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandWindowManager.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/LaunchAtLoginManager.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LaunchAtLoginManager.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LaunchAtLoginManager.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LaunchAtLoginManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LaunchAtLoginManager.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LaunchAtLoginManager.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/LogParsingCodexProvider.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LogParsingCodexProvider.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LogParsingCodexProvider.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LogParsingCodexProvider~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LogParsingCodexProvider.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LogParsingCodexProvider.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/MockStatusGenerator.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MockStatusGenerator.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MockStatusGenerator.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MockStatusGenerator~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MockStatusGenerator.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MockStatusGenerator.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/PlaceholderCodexProvider.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PlaceholderCodexProvider.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PlaceholderCodexProvider.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PlaceholderCodexProvider~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PlaceholderCodexProvider.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PlaceholderCodexProvider.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/ProcessWatchingCodexProvider.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ProcessWatchingCodexProvider.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ProcessWatchingCodexProvider.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ProcessWatchingCodexProvider~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ProcessWatchingCodexProvider.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ProcessWatchingCodexProvider.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/SettingsStore.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsStore.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsStore.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsStore.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsStore.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/SocketEventCodexProvider.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SocketEventCodexProvider.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SocketEventCodexProvider.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SocketEventCodexProvider~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SocketEventCodexProvider.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SocketEventCodexProvider.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/SoundManager.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SoundManager.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SoundManager.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SoundManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SoundManager.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SoundManager.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Island/CompactIslandView.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CompactIslandView.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CompactIslandView.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CompactIslandView~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CompactIslandView.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CompactIslandView.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Island/ExpandedIslandView.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ExpandedIslandView.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ExpandedIslandView.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ExpandedIslandView~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ExpandedIslandView.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ExpandedIslandView.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Island/FloatingIslandRootView.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandRootView.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandRootView.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandRootView~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandRootView.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandRootView.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Island/IslandStyle.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/IslandStyle.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/IslandStyle.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/IslandStyle~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/IslandStyle.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/IslandStyle.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/MenuBar/MenuBarCommands.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarCommands.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarCommands.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarCommands~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarCommands.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarCommands.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/MenuBar/MenuBarStatusView.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarStatusView.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarStatusView.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarStatusView~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarStatusView.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/MenuBarStatusView.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Settings/SettingsView.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsView.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsView.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsView.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsView.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Shared/LobsterAvatarView.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LobsterAvatarView.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LobsterAvatarView.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LobsterAvatarView~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LobsterAvatarView.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/LobsterAvatarView.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Shared/PixelLobsterShape.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PixelLobsterShape.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PixelLobsterShape.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PixelLobsterShape~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PixelLobsterShape.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/PixelLobsterShape.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Shared/StatusBadgeView.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusBadgeView.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusBadgeView.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusBadgeView~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusBadgeView.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusBadgeView.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Shared/TimestampLabel.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/TimestampLabel.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/TimestampLabel.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/TimestampLabel~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/TimestampLabel.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/TimestampLabel.dia"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/DerivedSources/resource_bundle_accessor.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/resource_bundle_accessor.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/resource_bundle_accessor.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/resource_bundle_accessor~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/resource_bundle_accessor.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/resource_bundle_accessor.dia"
+  }
+}

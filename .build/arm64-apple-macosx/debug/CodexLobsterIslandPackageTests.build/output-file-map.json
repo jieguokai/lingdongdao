@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandPackageTests.build/master.swiftdeps"
+  },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandPackageTests.derived/runner.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandPackageTests.build/runner.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandPackageTests.build/runner.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandPackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandPackageTests.build/runner.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandPackageTests.build/runner.dia"
+  }
+}
