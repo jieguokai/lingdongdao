@@ -7,7 +7,8 @@ let package = Package(
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "CodexLobsterIsland", targets: ["CodexLobsterIsland"])
+        .executable(name: "CodexLobsterIsland", targets: ["CodexLobsterIsland"]),
+        .executable(name: "CodexLobsterIslandVerify", targets: ["CodexLobsterIslandVerify"])
     ],
     targets: [
         .executableTarget(
@@ -15,6 +16,10 @@ let package = Package(
             resources: [
                 .process("Resources")
             ]
+        ),
+        .executableTarget(
+            name: "CodexLobsterIslandVerify",
+            dependencies: ["CodexLobsterIsland"]
         )
     ]
 )

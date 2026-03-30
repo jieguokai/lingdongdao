@@ -41,7 +41,7 @@ struct MenuBarStatusView: View {
 
             Divider()
 
-            Button("Next Mock State") {
+            Button(statusService.canManuallyTransition ? "Next Mock State" : "Refresh Source") {
                 statusService.advance()
             }
 

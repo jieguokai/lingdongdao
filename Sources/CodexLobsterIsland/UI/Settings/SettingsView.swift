@@ -55,17 +55,26 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Section("Mock State Controls") {
-                HStack(spacing: 8) {
-                    ForEach(CodexState.allCases, id: \.self) { state in
-                        Button(state.displayName) {
-                            statusService.setPreviewState(state)
+            Section(statusService.canManuallyTransition ? "Mock State Controls" : "Source Refresh") {
+                if statusService.canManuallyTransition {
+                    HStack(spacing: 8) {
+                        ForEach(CodexState.allCases, id: \.self) { state in
+                            Button(state.displayName) {
+                                statusService.setPreviewState(state)
+                            }
                         }
                     }
-                }
 
-                Button("Advance to Next Mock State") {
-                    statusService.advance()
+                    Button("Advance to Next Mock State") {
+                        statusService.advance()
+                    }
+                } else {
+                    Button("Refresh Current Source") {
+                        statusService.advance()
+                    }
+                    Text("Non-mock providers drive their own state. Refresh asks the active source for a new snapshot.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
 

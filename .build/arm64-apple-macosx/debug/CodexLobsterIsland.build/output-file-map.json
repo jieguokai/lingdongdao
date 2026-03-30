@@ -142,6 +142,13 @@
     "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsStore.swiftdeps",
     "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SettingsStore.dia"
   },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/ShellCommandRunner.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ShellCommandRunner.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ShellCommandRunner.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ShellCommandRunner~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ShellCommandRunner.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/ShellCommandRunner.dia"
+  },
   "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/SocketEventCodexProvider.swift": {
     "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SocketEventCodexProvider.d",
     "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/SocketEventCodexProvider.swift.o",

@@ -18,6 +18,7 @@
 '/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/PlaceholderCodexProvider.swift'
 '/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/ProcessWatchingCodexProvider.swift'
 '/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/SettingsStore.swift'
+'/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/ShellCommandRunner.swift'
 '/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/SocketEventCodexProvider.swift'
 '/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/SoundManager.swift'
 '/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/UI/Island/CompactIslandView.swift'
