@@ -1,12 +1,18 @@
 import Foundation
 
 @MainActor
-class PlaceholderCodexProvider: CodexStatusProviding {
+class PlaceholderCodexProvider: CodexStatusProviding, CodexProviderInspectable {
     let kind: CodexProviderKind
     let latestSnapshot: CodexStatusSnapshot
+    let providerStatusDetail: String
+
+    var providerKind: CodexProviderKind { kind }
+    var providerStatusSummary: String { kind.displayName }
+    var lastProviderError: String? { nil }
 
     init(kind: CodexProviderKind, title: String, detail: String) {
         self.kind = kind
+        self.providerStatusDetail = detail
         let timestamp = Date()
         let task = CodexTask(
             title: title,

@@ -2,7 +2,7 @@ import Foundation
 import Network
 
 @MainActor
-final class SocketEventCodexProvider: CodexStatusProviding {
+final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspectable {
     private let port: UInt16
     private let parser: CodexLogEventParser
     private let queue: DispatchQueue
@@ -10,7 +10,13 @@ final class SocketEventCodexProvider: CodexStatusProviding {
     private var connections: [ObjectIdentifier: NWConnection] = [:]
     private var bufferedData: [ObjectIdentifier: Data] = [:]
     private var onUpdate: (@MainActor (CodexStatusSnapshot) -> Void)?
+    private var lastErrorMessage: String?
     private(set) var latestSnapshot: CodexStatusSnapshot
+
+    var providerKind: CodexProviderKind { .socketEvent }
+    var providerStatusSummary: String { "Socket Event" }
+    var providerStatusDetail: String { "tcp://127.0.0.1:\(port)" }
+    var lastProviderError: String? { lastErrorMessage }
 
     init(
         port: UInt16 = SocketEventCodexProvider.defaultPort(),
@@ -83,6 +89,7 @@ final class SocketEventCodexProvider: CodexStatusProviding {
         switch state {
         case .ready:
             let now = Date()
+            lastErrorMessage = nil
             latestSnapshot = makeSnapshot(
                 state: .idle,
                 title: "Socket listener ready",
@@ -189,6 +196,7 @@ final class SocketEventCodexProvider: CodexStatusProviding {
     }
 
     private func publishError(_ detail: String) {
+        lastErrorMessage = detail
         latestSnapshot = makeSnapshot(
             state: .error,
             title: "Socket listener failed",

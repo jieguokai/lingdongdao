@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-final class ProcessWatchingCodexProvider: CodexStatusProviding {
+final class ProcessWatchingCodexProvider: CodexStatusProviding, CodexProviderInspectable {
     private let processQuery: String
     private let pollInterval: TimeInterval
     private let shellRunner: ShellCommandRunning
@@ -9,7 +9,13 @@ final class ProcessWatchingCodexProvider: CodexStatusProviding {
     private var onUpdate: (@MainActor (CodexStatusSnapshot) -> Void)?
     private var lastObservedCommand: String?
     private var wasRunning = false
+    private var lastErrorMessage: String?
     private(set) var latestSnapshot: CodexStatusSnapshot
+
+    var providerKind: CodexProviderKind { .processWatcher }
+    var providerStatusSummary: String { "Process Watcher" }
+    var providerStatusDetail: String { "pgrep -fal \(processQuery)" }
+    var lastProviderError: String? { lastErrorMessage }
 
     init(
         processQuery: String = "codex",
@@ -65,6 +71,7 @@ final class ProcessWatchingCodexProvider: CodexStatusProviding {
         do {
             let result = try shellRunner.run("/usr/bin/pgrep", arguments: ["-fal", processQuery])
             let matches = parseMatches(from: result.stdout)
+            lastErrorMessage = nil
 
             if let active = matches.first {
                 wasRunning = true
@@ -93,6 +100,7 @@ final class ProcessWatchingCodexProvider: CodexStatusProviding {
             }
         } catch {
             wasRunning = false
+            lastErrorMessage = error.localizedDescription
             latestSnapshot = makeSnapshot(
                 state: .error,
                 title: "Process watcher failed",

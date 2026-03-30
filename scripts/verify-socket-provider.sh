@@ -9,6 +9,8 @@ swiftc \
   -package-name CodexLobsterIsland \
   -framework Network \
   "$ROOT/Sources/CodexLobsterIsland/Domain/CodexState.swift" \
+  "$ROOT/Sources/CodexLobsterIsland/Domain/CodexProviderKind.swift" \
+  "$ROOT/Sources/CodexLobsterIsland/Domain/CodexProviderInspectable.swift" \
   "$ROOT/Sources/CodexLobsterIsland/Domain/CodexTask.swift" \
   "$ROOT/Sources/CodexLobsterIsland/Domain/CodexStatusProviding.swift" \
   "$ROOT/Sources/CodexLobsterIsland/Services/CodexLogEventParser.swift" \

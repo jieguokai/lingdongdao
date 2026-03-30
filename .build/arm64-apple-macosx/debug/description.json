@@ -81,6 +81,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexProviderInspectable.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexProviderKind.swift"
         },
         {
@@ -228,6 +232,7 @@
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppDependencies.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLobsterIslandApp.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppSettings.swift.o",
+        "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderInspectable.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderKind.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexState.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusProviding.swift.o",
@@ -321,6 +326,10 @@
         {
           "kind" : "file",
           "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppSettings.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderInspectable.swift.o"
         },
         {
           "kind" : "file",
@@ -461,6 +470,7 @@
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/App/AppDependencies.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/App/CodexLobsterIslandApp.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/AppSettings.swift",
+        "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexProviderInspectable.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexProviderKind.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexState.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexStatusProviding.swift",
@@ -513,6 +523,7 @@
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/App/AppDependencies.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/App/CodexLobsterIslandApp.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/AppSettings.swift",
+      "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexProviderInspectable.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexProviderKind.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexState.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexStatusProviding.swift",
@@ -645,6 +656,10 @@
         {
           "kind" : "file",
           "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/AppSettings.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/CodexProviderInspectable.swift"
         },
         {
           "kind" : "file",
@@ -811,6 +826,10 @@
         {
           "kind" : "file",
           "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderInspectable.swift.o"
         },
         {
           "kind" : "file",

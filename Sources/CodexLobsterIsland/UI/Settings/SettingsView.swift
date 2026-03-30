@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct SettingsView: View {
@@ -53,6 +54,35 @@ struct SettingsView: View {
                 Text(settingsStore.settings.providerKind.subtitle)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                LabeledContent("Active Source", value: statusService.providerStatusSummary)
+                LabeledContent("Connection") {
+                    Text(statusService.providerStatusDetail)
+                        .multilineTextAlignment(.trailing)
+                        .textSelection(.enabled)
+                }
+
+                if let providerError = statusService.lastProviderError {
+                    Text(providerError)
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .textSelection(.enabled)
+                }
+
+                HStack {
+                    Button("Copy Source Info") {
+                        let pasteboard = NSPasteboard.general
+                        pasteboard.clearContents()
+                        pasteboard.setString(
+                            "\(statusService.providerStatusSummary)\n\(statusService.providerStatusDetail)",
+                            forType: .string
+                        )
+                    }
+
+                    Button("Refresh Current Source") {
+                        statusService.advance()
+                    }
+                }
             }
 
             Section(statusService.canManuallyTransition ? "Mock State Controls" : "Source Refresh") {
@@ -79,6 +109,14 @@ struct SettingsView: View {
             }
 
             Section("History") {
+                HStack {
+                    Button("Clear History") {
+                        statusService.clearHistory()
+                    }
+                    .disabled(statusService.history.isEmpty)
+                    Spacer()
+                }
+
                 ForEach(statusService.history.prefix(8)) { entry in
                     HStack {
                         StatusBadgeView(state: entry.state, compact: true)

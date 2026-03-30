@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct MenuBarStatusView: View {
@@ -19,6 +20,22 @@ struct MenuBarStatusView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
 
+            VStack(alignment: .leading, spacing: 4) {
+                Text(statusService.providerStatusSummary)
+                    .font(.caption.weight(.semibold))
+                Text(statusService.providerStatusDetail)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+            }
+
+            if let providerError = statusService.lastProviderError {
+                Text(providerError)
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                    .lineLimit(2)
+            }
+
             Divider()
 
             Button(settingsStore.settings.showsIsland ? "Hide Island" : "Show Island") {
@@ -39,10 +56,23 @@ struct MenuBarStatusView: View {
                 }
             }
 
+            Button("Copy Source Info") {
+                let pasteboard = NSPasteboard.general
+                pasteboard.clearContents()
+                pasteboard.setString(
+                    "\(statusService.providerStatusSummary)\n\(statusService.providerStatusDetail)",
+                    forType: .string
+                )
+            }
+
             Divider()
 
             Button(statusService.canManuallyTransition ? "Next Mock State" : "Refresh Source") {
                 statusService.advance()
+            }
+
+            Button("Clear History") {
+                statusService.clearHistory()
             }
 
             if statusService.canManuallyTransition {
@@ -68,7 +98,7 @@ struct MenuBarStatusView: View {
             }
         }
         .padding(12)
-        .frame(width: 260)
+        .frame(width: 280)
     }
 
     private func toggleBinding(_ keyPath: WritableKeyPath<AppSettings, Bool>) -> Binding<Bool> {

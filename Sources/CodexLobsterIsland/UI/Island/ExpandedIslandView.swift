@@ -63,6 +63,41 @@ struct ExpandedIslandView: View {
                 }
             }
 
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Source")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.72))
+
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "dot.radiowaves.left.and.right")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.7))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(statusService.providerStatusSummary)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.white)
+                        Text(statusService.providerStatusDetail)
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.62))
+                            .textSelection(.enabled)
+                    }
+                }
+
+                if let providerError = statusService.lastProviderError {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                        Text(providerError)
+                            .font(.caption2)
+                            .foregroundStyle(.orange.opacity(0.92))
+                            .textSelection(.enabled)
+                    }
+                }
+            }
+            .padding(12)
+            .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+
             VStack(alignment: .leading, spacing: 8) {
                 Text("Recent States")
                     .font(.caption.weight(.semibold))

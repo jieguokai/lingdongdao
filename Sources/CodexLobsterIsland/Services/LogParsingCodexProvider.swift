@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-final class LogParsingCodexProvider: CodexStatusProviding {
+final class LogParsingCodexProvider: CodexStatusProviding, CodexProviderInspectable {
     private let logFileURL: URL
     private let pollInterval: TimeInterval
     private let fileManager: FileManager
@@ -9,7 +9,13 @@ final class LogParsingCodexProvider: CodexStatusProviding {
     private var timer: Timer?
     private var onUpdate: (@MainActor (CodexStatusSnapshot) -> Void)?
     private var lastObservedLine: String?
+    private var lastErrorMessage: String?
     private(set) var latestSnapshot: CodexStatusSnapshot
+
+    var providerKind: CodexProviderKind { .logParser }
+    var providerStatusSummary: String { "Log Parser" }
+    var providerStatusDetail: String { logFileURL.path }
+    var lastProviderError: String? { lastErrorMessage }
 
     init(
         logFileURL: URL = LogParsingCodexProvider.defaultLogFileURL(),
@@ -66,6 +72,7 @@ final class LogParsingCodexProvider: CodexStatusProviding {
 
         do {
             guard fileManager.fileExists(atPath: logFileURL.path) else {
+                lastErrorMessage = nil
                 latestSnapshot = makeSnapshot(
                     state: .idle,
                     title: "Watching Codex log file",
@@ -79,6 +86,7 @@ final class LogParsingCodexProvider: CodexStatusProviding {
 
             let content = try String(contentsOf: logFileURL, encoding: .utf8)
             guard let line = content.split(whereSeparator: \.isNewline).reversed().first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) else {
+                lastErrorMessage = nil
                 latestSnapshot = makeSnapshot(
                     state: .idle,
                     title: "Codex log is empty",
@@ -97,6 +105,7 @@ final class LogParsingCodexProvider: CodexStatusProviding {
             }
 
             let event = try parser.parse(line: lineValue)
+            lastErrorMessage = nil
             lastObservedLine = lineValue
             latestSnapshot = makeSnapshot(
                 state: event.state,
@@ -106,6 +115,7 @@ final class LogParsingCodexProvider: CodexStatusProviding {
                 resetStart: latestSnapshot.state != event.state
             )
         } catch {
+            lastErrorMessage = error.localizedDescription
             latestSnapshot = makeSnapshot(
                 state: .error,
                 title: "Log parser failed",

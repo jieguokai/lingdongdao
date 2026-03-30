@@ -42,6 +42,22 @@ final class CodexStatusService {
         provider is CodexStatusControllable
     }
 
+    var providerKind: CodexProviderKind {
+        inspectableProvider?.providerKind ?? .mock
+    }
+
+    var providerStatusSummary: String {
+        inspectableProvider?.providerStatusSummary ?? providerKind.displayName
+    }
+
+    var providerStatusDetail: String {
+        inspectableProvider?.providerStatusDetail ?? providerKind.subtitle
+    }
+
+    var lastProviderError: String? {
+        inspectableProvider?.lastProviderError
+    }
+
     func replaceProvider(_ provider: CodexStatusProviding) {
         self.provider.stop()
         self.provider = provider
@@ -68,5 +84,13 @@ final class CodexStatusService {
             history.removeLast(history.count - 12)
         }
         onSnapshotApplied?(snapshot)
+    }
+
+    func clearHistory() {
+        history.removeAll(keepingCapacity: false)
+    }
+
+    private var inspectableProvider: CodexProviderInspectable? {
+        provider as? CodexProviderInspectable
     }
 }
