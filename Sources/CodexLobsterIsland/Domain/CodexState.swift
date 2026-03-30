@@ -1,6 +1,6 @@
 import Foundation
 
-enum CodexState: String, Codable, CaseIterable, Sendable {
+package enum CodexState: String, Codable, CaseIterable, Sendable {
     case idle
     case running
     case success

@@ -79,6 +79,13 @@
     "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/DateFormatter+Relative.swiftdeps",
     "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/DateFormatter+Relative.dia"
   },
+  "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexLogEventParser.swift": {
+    "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLogEventParser.d",
+    "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLogEventParser.swift.o",
+    "swiftmodule": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLogEventParser~partial.swiftmodule",
+    "swift-dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLogEventParser.swiftdeps",
+    "diagnostics": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLogEventParser.dia"
+  },
   "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexProviderFactory.swift": {
     "dependencies": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.d",
     "object": "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.swift.o",

@@ -109,6 +109,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexLogEventParser.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexProviderFactory.swift"
         },
         {
@@ -231,6 +235,7 @@
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/StatusHistoryEntry.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/AppConstants.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/DateFormatter+Relative.swift.o",
+        "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLogEventParser.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexStatusService.swift.o",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/FloatingIslandWindowManager.swift.o",
@@ -347,6 +352,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLogEventParser.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.swift.o"
         },
         {
@@ -459,6 +468,7 @@
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/StatusHistoryEntry.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Helpers/AppConstants.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Helpers/DateFormatter+Relative.swift",
+        "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexLogEventParser.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexProviderFactory.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexStatusService.swift",
         "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/FloatingIslandWindowManager.swift",
@@ -486,96 +496,6 @@
       ],
       "tempsPath" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build",
       "wholeModuleOptimization" : false
-    },
-    "C.CodexLobsterIslandVerify-arm64-apple-macosx26.0-debug.module" : {
-      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
-      "fileList" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.build/sources",
-      "importPath" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/Modules",
-      "inputs" : [
-        {
-          "kind" : "file",
-          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIslandVerify/main.swift"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.build/sources"
-        }
-      ],
-      "isLibrary" : false,
-      "moduleName" : "CodexLobsterIslandVerify",
-      "moduleOutputPath" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/Modules/CodexLobsterIslandVerify.swiftmodule",
-      "objects" : [
-        "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.build/main.swift.o"
-      ],
-      "otherArguments" : [
-        "-target",
-        "arm64-apple-macosx14.0",
-        "-incremental",
-        "-enable-batch-mode",
-        "-serialize-diagnostics",
-        "-index-store-path",
-        "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/index/store",
-        "-Onone",
-        "-enable-testing",
-        "-j8",
-        "-DSWIFT_PACKAGE",
-        "-DDEBUG",
-        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
-        "-module-cache-path",
-        "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/ModuleCache",
-        "-parseable-output",
-        "-Xfrontend",
-        "-entry-point-function-name",
-        "-Xfrontend",
-        "CodexLobsterIslandVerify_main",
-        "-parse-as-library",
-        "-swift-version",
-        "6",
-        "-I",
-        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
-        "-L",
-        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
-        "-plugin-path",
-        "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
-        "-sdk",
-        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
-        "-g",
-        "-Xcc",
-        "-isysroot",
-        "-Xcc",
-        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
-        "-Xcc",
-        "-fPIC",
-        "-Xcc",
-        "-g",
-        "-package-name",
-        "lingdongdao"
-      ],
-      "outputFileMapPath" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.build/output-file-map.json",
-      "outputs" : [
-        {
-          "kind" : "file",
-          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.build/main.swift.o"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/Modules/CodexLobsterIslandVerify.swiftmodule"
-        }
-      ],
-      "prepareForIndexing" : false,
-      "sources" : [
-        "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIslandVerify/main.swift"
-      ],
-      "tempsPath" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.build",
-      "wholeModuleOptimization" : false
     }
   },
   "swiftFrontendCommands" : {
@@ -600,6 +520,7 @@
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Domain/StatusHistoryEntry.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Helpers/AppConstants.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Helpers/DateFormatter+Relative.swift",
+      "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexLogEventParser.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexProviderFactory.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexStatusService.swift",
       "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/FloatingIslandWindowManager.swift",
@@ -669,69 +590,11 @@
       "lingdongdao",
       "-driver-use-frontend-path",
       "/Library/Developer/CommandLineTools/usr/bin/swiftc"
-    ],
-    "CodexLobsterIslandVerify" : [
-      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
-      "-module-name",
-      "CodexLobsterIslandVerify",
-      "-package-name",
-      "lingdongdao",
-      "-c",
-      "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIslandVerify/main.swift",
-      "-I",
-      "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/Modules",
-      "-target",
-      "arm64-apple-macosx14.0",
-      "-incremental",
-      "-enable-batch-mode",
-      "-serialize-diagnostics",
-      "-index-store-path",
-      "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/index/store",
-      "-Onone",
-      "-enable-testing",
-      "-j8",
-      "-DSWIFT_PACKAGE",
-      "-DDEBUG",
-      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
-      "-module-cache-path",
-      "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/ModuleCache",
-      "-parseable-output",
-      "-Xfrontend",
-      "-entry-point-function-name",
-      "-Xfrontend",
-      "CodexLobsterIslandVerify_main",
-      "-parse-as-library",
-      "-swift-version",
-      "6",
-      "-I",
-      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
-      "-L",
-      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
-      "-plugin-path",
-      "/Library/Developer/CommandLineTools/usr/lib/swift/host/plugins/testing",
-      "-sdk",
-      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
-      "-g",
-      "-Xcc",
-      "-isysroot",
-      "-Xcc",
-      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
-      "-Xcc",
-      "-fPIC",
-      "-Xcc",
-      "-g",
-      "-package-name",
-      "lingdongdao",
-      "-driver-use-frontend-path",
-      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
     ]
   },
   "targetDependencyMap" : {
     "CodexLobsterIsland" : [
 
-    ],
-    "CodexLobsterIslandVerify" : [
-      "CodexLobsterIsland"
     ]
   },
   "testDiscoveryCommands" : {
@@ -810,6 +673,10 @@
         {
           "kind" : "file",
           "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Helpers/DateFormatter+Relative.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIsland/Services/CodexLogEventParser.swift"
         },
         {
           "kind" : "file",
@@ -939,6 +806,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexLogEventParser.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.build/CodexProviderFactory.swift.o"
         },
         {
@@ -1059,48 +930,6 @@
         }
       ],
       "outputFilePath" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIsland.product/Objects.LinkFileList"
-    },
-    "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify-entitlement.plist" : {
-      "alwaysOutOfDate" : false,
-      "inputs" : [
-        {
-          "kind" : "virtual",
-          "name" : "<entitlement-plist>"
-        },
-        {
-          "kind" : "virtual",
-          "name" : "<com.apple.security.get-task-allow>"
-        }
-      ],
-      "outputFilePath" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify-entitlement.plist"
-    },
-    "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.build/sources" : {
-      "alwaysOutOfDate" : false,
-      "inputs" : [
-        {
-          "kind" : "virtual",
-          "name" : "<sources-file-list>"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/Sources/CodexLobsterIslandVerify/main.swift"
-        }
-      ],
-      "outputFilePath" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.build/sources"
-    },
-    "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.product/Objects.LinkFileList" : {
-      "alwaysOutOfDate" : false,
-      "inputs" : [
-        {
-          "kind" : "virtual",
-          "name" : "<link-file-list>"
-        },
-        {
-          "kind" : "file",
-          "name" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.build/main.swift.o"
-        }
-      ],
-      "outputFilePath" : "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/CodexLobsterIslandVerify.product/Objects.LinkFileList"
     },
     "/Users/kevin/Documents/01_开发项目/lingdongdao/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt" : {
       "alwaysOutOfDate" : true,

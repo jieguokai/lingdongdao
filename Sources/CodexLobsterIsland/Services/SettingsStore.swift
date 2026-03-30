@@ -18,12 +18,14 @@ final class SettingsStore {
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        let environment = ProcessInfo.processInfo.environment
+        let providerOverride = environment["CODEX_LOBSTER_PROVIDER_KIND"].flatMap(CodexProviderKind.init(rawValue:))
         self.settings = AppSettings(
             isMuted: defaults.object(forKey: Keys.isMuted) as? Bool ?? false,
             showsIsland: defaults.object(forKey: Keys.showsIsland) as? Bool ?? true,
             animationsEnabled: defaults.object(forKey: Keys.animationsEnabled) as? Bool ?? true,
             launchAtLoginEnabled: defaults.object(forKey: Keys.launchAtLoginEnabled) as? Bool ?? false,
-            providerKind: CodexProviderKind(rawValue: defaults.string(forKey: Keys.providerKind) ?? "") ?? .mock
+            providerKind: providerOverride ?? CodexProviderKind(rawValue: defaults.string(forKey: Keys.providerKind) ?? "") ?? .mock
         )
     }
 

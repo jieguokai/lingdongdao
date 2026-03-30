@@ -1,8 +1,7 @@
 import Foundation
-import CodexLobsterIsland
 
 @main
-struct CodexLobsterIslandVerify {
+struct VerifyLogParser {
     static func main() throws {
         let line = #"{"state":"running","title":"Build project","detail":"Compiling sources","timestamp":"2026-03-30T08:15:30Z"}"#
         let event = try CodexLogEventParser().parse(line: line)
