@@ -9,6 +9,7 @@ This repository is intended for public development and distribution. Build artif
 Project docs:
 
 - [License](/Users/kevin/Documents/01_开发项目/lingdongdao/LICENSE)
+- [Code of Conduct](/Users/kevin/Documents/01_开发项目/lingdongdao/CODE_OF_CONDUCT.md)
 - [Contributing](/Users/kevin/Documents/01_开发项目/lingdongdao/CONTRIBUTING.md)
 - [Security](/Users/kevin/Documents/01_开发项目/lingdongdao/SECURITY.md)
 
