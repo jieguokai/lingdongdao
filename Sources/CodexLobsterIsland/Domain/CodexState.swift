@@ -7,7 +7,16 @@ package enum CodexState: String, Codable, CaseIterable, Sendable {
     case error
 
     var displayName: String {
-        rawValue.capitalized
+        switch self {
+        case .idle:
+            "空闲"
+        case .running:
+            "运行中"
+        case .success:
+            "成功"
+        case .error:
+            "错误"
+        }
     }
 
     var symbolName: String {
@@ -26,26 +35,50 @@ package enum CodexState: String, Codable, CaseIterable, Sendable {
     var menuBarLabel: String {
         switch self {
         case .idle:
-            "Idle"
+            "空闲"
         case .running:
-            "Running"
+            "运行中"
         case .success:
-            "Success"
+            "成功"
         case .error:
-            "Error"
+            "错误"
         }
     }
 
     var subtitle: String {
         switch self {
         case .idle:
-            "Calm breathing"
+            "静息待命"
         case .running:
-            "Looping motion"
+            "持续处理中"
         case .success:
-            "Celebration ping"
+            "已顺利完成"
         case .error:
-            "Warning shake"
+            "需要立即处理"
+        }
+    }
+
+    var dynamicIslandTitle: String {
+        switch self {
+        case .idle:
+            "等待中"
+        case .running:
+            "工作中"
+        case .success:
+            "已完成"
+        case .error:
+            "出错了"
+        }
+    }
+
+    var soundResourceName: String? {
+        switch self {
+        case .success:
+            "success"
+        case .error:
+            "error"
+        case .idle, .running:
+            nil
         }
     }
 }

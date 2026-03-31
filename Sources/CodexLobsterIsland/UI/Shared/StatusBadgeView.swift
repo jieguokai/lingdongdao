@@ -3,26 +3,22 @@ import SwiftUI
 struct StatusBadgeView: View {
     let state: CodexState
     var compact = false
+    var interactionPhase: InteractivePhase = .resting
+    var animationsEnabled = true
 
     var body: some View {
-        Label(state.displayName, systemImage: state.symbolName)
-            .font(compact ? .caption2.weight(.semibold) : .caption.weight(.semibold))
-            .foregroundStyle(.white)
-            .padding(.horizontal, compact ? 8 : 10)
-            .padding(.vertical, compact ? 4 : 6)
-            .background(backgroundColor, in: Capsule())
-    }
+        let style = InteractionStyle.badge(
+            for: interactionPhase,
+            animationsEnabled: animationsEnabled
+        )
 
-    private var backgroundColor: Color {
-        switch state {
-        case .idle:
-            .blue.opacity(0.5)
-        case .running:
-            .teal.opacity(0.6)
-        case .success:
-            .green.opacity(0.7)
-        case .error:
-            .red.opacity(0.7)
-        }
+        Label(state.displayName, systemImage: state.symbolName)
+            .font(compact ? .caption.weight(.medium) : .caption.weight(.semibold))
+            .labelStyle(.titleAndIcon)
+            .symbolRenderingMode(.monochrome)
+            .foregroundStyle(compact ? IslandStyle.tertiaryText : IslandStyle.secondaryText)
+            .scaleEffect(style.scale)
+            .offset(y: style.yOffset)
+            .animation(.spring(response: 0.22, dampingFraction: 0.76), value: interactionPhase)
     }
 }

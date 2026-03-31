@@ -23,6 +23,7 @@ final class AppBootstrap {
             settingsStore: dependencies.settingsStore
         )
         applySettings(dependencies.settingsStore.settings)
+        dependencies.appUpdateService.start()
         dependencies.statusService.start()
         dependencies.floatingIslandWindowManager.refresh()
     }

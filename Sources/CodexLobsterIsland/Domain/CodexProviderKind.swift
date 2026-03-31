@@ -11,26 +11,26 @@ enum CodexProviderKind: String, CaseIterable, Codable, Sendable, Identifiable {
     var displayName: String {
         switch self {
         case .mock:
-            "Mock"
+            "模拟演示"
         case .processWatcher:
-            "Process Watcher"
+            "进程监听"
         case .logParser:
-            "Log Parser"
+            "日志解析"
         case .socketEvent:
-            "Socket Event"
+            "套接字事件"
         }
     }
 
     var subtitle: String {
         switch self {
         case .mock:
-            "Built-in demo flow for MVP"
+            "内置演示流程"
         case .processWatcher:
-            "Observe a local Codex process"
+            "观察本地 Codex 进程状态"
         case .logParser:
-            "Read status from structured logs"
+            "从结构化日志中读取状态"
         case .socketEvent:
-            "Receive status over a local socket"
+            "通过本地套接字接收状态"
         }
     }
 }

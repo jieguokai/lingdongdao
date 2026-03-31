@@ -1,32 +1,65 @@
 import SwiftUI
 
 enum IslandStyle {
-    static func background(for state: CodexState) -> LinearGradient {
-        let colors: [Color]
-        switch state {
-        case .idle:
-            colors = [Color.black.opacity(0.9), Color.blue.opacity(0.55)]
-        case .running:
-            colors = [Color.black.opacity(0.92), Color.teal.opacity(0.7)]
-        case .success:
-            colors = [Color.black.opacity(0.9), Color.green.opacity(0.72)]
-        case .error:
-            colors = [Color.black.opacity(0.92), Color.red.opacity(0.72)]
-        }
+    static func background(for state: CodexState) -> AnyShapeStyle {
+        _ = state
+        return AnyShapeStyle(.ultraThinMaterial)
+    }
 
-        return LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing)
+    static func tintOverlay(for state: CodexState) -> LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(.sRGB, red: 0.07, green: 0.08, blue: 0.11, opacity: 0.46),
+                accent(for: state).opacity(0.05),
+                Color(.sRGB, red: 0.04, green: 0.05, blue: 0.07, opacity: 0.34)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    static var edgeHighlight: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.white.opacity(0.20),
+                Color.white.opacity(0.09),
+                Color.white.opacity(0.04)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 
     static func glow(for state: CodexState) -> Color {
+        accent(for: state).opacity(0.16)
+    }
+
+    static func accent(for state: CodexState) -> Color {
         switch state {
         case .idle:
-            Color.blue.opacity(0.25)
+            Color(.sRGB, red: 0.37, green: 0.56, blue: 0.96, opacity: 1)
         case .running:
-            Color.cyan.opacity(0.32)
+            Color(.sRGB, red: 0.14, green: 0.72, blue: 0.95, opacity: 1)
         case .success:
-            Color.green.opacity(0.36)
+            Color(.sRGB, red: 0.22, green: 0.79, blue: 0.52, opacity: 1)
         case .error:
-            Color.red.opacity(0.35)
+            Color(.sRGB, red: 1.0, green: 0.42, blue: 0.38, opacity: 1)
         }
+    }
+
+    static var panelFill: Color {
+        Color.white.opacity(0.06)
+    }
+
+    static var separator: Color {
+        Color.white.opacity(0.10)
+    }
+
+    static var secondaryText: Color {
+        Color.white.opacity(0.76)
+    }
+
+    static var tertiaryText: Color {
+        Color.white.opacity(0.58)
     }
 }

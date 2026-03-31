@@ -16,6 +16,7 @@ struct CodexLobsterIslandApp: App {
         MenuBarExtra {
             MenuBarStatusView(
                 statusService: bootstrap.dependencies.statusService,
+                appUpdateService: bootstrap.dependencies.appUpdateService,
                 settingsStore: bootstrap.dependencies.settingsStore,
                 launchAtLoginManager: bootstrap.dependencies.launchAtLoginManager
             )
@@ -25,10 +26,12 @@ struct CodexLobsterIslandApp: App {
                 systemImage: bootstrap.dependencies.statusService.currentState.symbolName
             )
         }
+        .menuBarExtraStyle(.window)
 
         Settings {
             SettingsView(
                 statusService: bootstrap.dependencies.statusService,
+                appUpdateService: bootstrap.dependencies.appUpdateService,
                 settingsStore: bootstrap.dependencies.settingsStore,
                 launchAtLoginManager: bootstrap.dependencies.launchAtLoginManager
             )

@@ -11,15 +11,15 @@ final class LaunchAtLoginManager {
 
     var supportDescription: String {
         if Bundle.main.bundleURL.pathExtension != "app" {
-            return "Running via swift run: launch at login registration may be unavailable until packaged as an .app bundle."
+            return "当前通过 swift run 运行；在打包为 .app 前，登录时启动可能不可用。"
         }
-        return "Uses ServiceManagement when available."
+        return "打包为 .app 后会优先使用 ServiceManagement。"
     }
 
     func applyPreference(_ enabled: Bool) {
         #if canImport(ServiceManagement)
         guard Bundle.main.bundleURL.pathExtension == "app" else {
-            lastErrorMessage = "Launch at login requires an app bundle."
+            lastErrorMessage = "登录时启动需要 .app 应用包。"
             return
         }
 
@@ -34,7 +34,7 @@ final class LaunchAtLoginManager {
             lastErrorMessage = error.localizedDescription
         }
         #else
-        lastErrorMessage = "ServiceManagement is unavailable in the current toolchain."
+        lastErrorMessage = "当前工具链不支持 ServiceManagement。"
         #endif
     }
 }

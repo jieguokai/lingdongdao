@@ -45,7 +45,7 @@ enum ShellCommandError: LocalizedError {
         switch self {
         case let .executionFailed(command, message):
             let trimmed = message.trimmingCharacters(in: .whitespacesAndNewlines)
-            return trimmed.isEmpty ? "Command failed: \(command)" : "Command failed: \(command) — \(trimmed)"
+            return trimmed.isEmpty ? "命令执行失败：\(command)" : "命令执行失败：\(command)；\(trimmed)"
         }
     }
 }

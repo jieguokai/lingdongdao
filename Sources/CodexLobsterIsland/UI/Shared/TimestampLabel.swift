@@ -5,7 +5,7 @@ struct TimestampLabel: View {
 
     var body: some View {
         Label(date.shortRelativeString, systemImage: "clock")
-            .font(.caption)
-            .foregroundStyle(.white.opacity(0.68))
+            .font(.caption2.weight(.medium))
+            .foregroundStyle(IslandStyle.tertiaryText)
     }
 }

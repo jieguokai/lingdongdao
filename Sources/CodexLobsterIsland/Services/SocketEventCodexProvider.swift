@@ -14,7 +14,7 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
     private(set) var latestSnapshot: CodexStatusSnapshot
 
     var providerKind: CodexProviderKind { .socketEvent }
-    var providerStatusSummary: String { "Socket Event" }
+    var providerStatusSummary: String { "套接字事件" }
     var providerStatusDetail: String { "tcp://127.0.0.1:\(port)" }
     var lastProviderError: String? { lastErrorMessage }
 
@@ -28,8 +28,8 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
 
         let timestamp = Date()
         let task = CodexTask(
-            title: "Listening for Codex socket events",
-            detail: "Waiting on tcp://127.0.0.1:\(port)",
+            title: "正在监听 Codex 套接字事件",
+            detail: "正在等待 tcp://127.0.0.1:\(port)",
             state: .idle,
             startedAt: timestamp,
             updatedAt: timestamp
@@ -63,7 +63,7 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
 
         do {
             guard let nwPort = NWEndpoint.Port(rawValue: port) else {
-                publishError("Invalid socket port \(port).")
+                publishError("套接字端口 \(port) 无效。")
                 return
             }
 
@@ -92,8 +92,8 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
             lastErrorMessage = nil
             latestSnapshot = makeSnapshot(
                 state: .idle,
-                title: "Socket listener ready",
-                detail: "Waiting on tcp://127.0.0.1:\(port)",
+                title: "套接字监听已就绪",
+                detail: "正在等待 tcp://127.0.0.1:\(port)",
                 timestamp: now,
                 resetStart: false
             )
@@ -199,7 +199,7 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
         lastErrorMessage = detail
         latestSnapshot = makeSnapshot(
             state: .error,
-            title: "Socket listener failed",
+            title: "套接字监听失败",
             detail: detail,
             timestamp: Date(),
             resetStart: latestSnapshot.state != .error

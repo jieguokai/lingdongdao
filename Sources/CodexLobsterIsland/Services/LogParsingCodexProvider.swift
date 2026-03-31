@@ -13,7 +13,7 @@ final class LogParsingCodexProvider: CodexStatusProviding, CodexProviderInspecta
     private(set) var latestSnapshot: CodexStatusSnapshot
 
     var providerKind: CodexProviderKind { .logParser }
-    var providerStatusSummary: String { "Log Parser" }
+    var providerStatusSummary: String { "日志解析" }
     var providerStatusDetail: String { logFileURL.path }
     var lastProviderError: String? { lastErrorMessage }
 
@@ -30,8 +30,8 @@ final class LogParsingCodexProvider: CodexStatusProviding, CodexProviderInspecta
 
         let timestamp = Date()
         let task = CodexTask(
-            title: "Watching Codex log file",
-            detail: "Waiting for \(logFileURL.path)",
+            title: "正在监听 Codex 日志文件",
+            detail: "等待 \(logFileURL.path)",
             state: .idle,
             startedAt: timestamp,
             updatedAt: timestamp
@@ -75,8 +75,8 @@ final class LogParsingCodexProvider: CodexStatusProviding, CodexProviderInspecta
                 lastErrorMessage = nil
                 latestSnapshot = makeSnapshot(
                     state: .idle,
-                    title: "Watching Codex log file",
-                    detail: "No log file found at \(logFileURL.path)",
+                    title: "正在监听 Codex 日志文件",
+                    detail: "未在 \(logFileURL.path) 找到日志文件",
                     timestamp: now,
                     resetStart: false
                 )
@@ -89,8 +89,8 @@ final class LogParsingCodexProvider: CodexStatusProviding, CodexProviderInspecta
                 lastErrorMessage = nil
                 latestSnapshot = makeSnapshot(
                     state: .idle,
-                    title: "Codex log is empty",
-                    detail: "Waiting for structured events in \(logFileURL.lastPathComponent)",
+                    title: "Codex 日志为空",
+                    detail: "正在等待 \(logFileURL.lastPathComponent) 中的结构化事件",
                     timestamp: now,
                     resetStart: false
                 )
@@ -118,7 +118,7 @@ final class LogParsingCodexProvider: CodexStatusProviding, CodexProviderInspecta
             lastErrorMessage = error.localizedDescription
             latestSnapshot = makeSnapshot(
                 state: .error,
-                title: "Log parser failed",
+                title: "日志解析失败",
                 detail: error.localizedDescription,
                 timestamp: now,
                 resetStart: latestSnapshot.state != .error

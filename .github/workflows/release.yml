@@ -1,0 +1,188 @@
+name: Release macOS App
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version, for example 0.1.0
+        required: true
+        default: 0.1.0
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-release:
+    runs-on: macos-14
+    permissions:
+      contents: write
+
+    env:
+      APP_VERSION: ${{ github.event.inputs.version || github.ref_name }}
+      APP_BUILD: ${{ github.run_number }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate release configuration
+        env:
+          APPLE_DEVELOPER_ID_P12_BASE64: ${{ secrets.APPLE_DEVELOPER_ID_P12_BASE64 }}
+          APPLE_DEVELOPER_ID_P12_PASSWORD: ${{ secrets.APPLE_DEVELOPER_ID_P12_PASSWORD }}
+          APPLE_KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+          APPLE_NOTARY_APPLE_ID: ${{ secrets.APPLE_NOTARY_APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_DEVELOPER_IDENTITY: ${{ secrets.APPLE_DEVELOPER_IDENTITY }}
+          SPARKLE_PRIVATE_ED_KEY_BASE64: ${{ secrets.SPARKLE_PRIVATE_ED_KEY_BASE64 }}
+          SPARKLE_PUBLIC_ED_KEY: ${{ secrets.SPARKLE_PUBLIC_ED_KEY }}
+          DOWNLOAD_BASE_URL: ${{ vars.DOWNLOAD_BASE_URL }}
+          APPCAST_URL: ${{ vars.APPCAST_URL }}
+          RELEASE_NOTES_URL: ${{ vars.RELEASE_NOTES_URL }}
+        run: |
+          REQUIRED_SECRETS=(
+            APPLE_DEVELOPER_ID_P12_BASE64
+            APPLE_DEVELOPER_ID_P12_PASSWORD
+            APPLE_KEYCHAIN_PASSWORD
+            APPLE_NOTARY_APPLE_ID
+            APPLE_TEAM_ID
+            APPLE_APP_SPECIFIC_PASSWORD
+            APPLE_DEVELOPER_IDENTITY
+            SPARKLE_PUBLIC_ED_KEY
+          )
+          REQUIRED_VARS=(
+            DOWNLOAD_BASE_URL
+            APPCAST_URL
+            RELEASE_NOTES_URL
+          )
+          for key in "${REQUIRED_SECRETS[@]}"; do
+            if [[ -z "${!key:-}" ]]; then
+              echo "Missing required GitHub secret: $key" >&2
+              exit 1
+            fi
+          done
+          for key in "${REQUIRED_VARS[@]}"; do
+            if [[ -z "${!key:-}" ]]; then
+              echo "Missing required GitHub variable: $key" >&2
+              exit 1
+            fi
+          done
+          if [[ -z "${SPARKLE_PRIVATE_ED_KEY_BASE64:-}" ]]; then
+            echo "Missing optional GitHub secret: SPARKLE_PRIVATE_ED_KEY_BASE64" >&2
+            echo "Archive and appcast EdDSA signatures will be skipped." >&2
+          fi
+
+      - name: Select Xcode
+        run: sudo xcode-select -switch /Applications/Xcode.app
+
+      - name: Import Developer ID certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_DEVELOPER_ID_P12_BASE64 }}
+          P12_PASSWORD: ${{ secrets.APPLE_DEVELOPER_ID_P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.APPLE_KEYCHAIN_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/codex-lobster.keychain-db"
+          CERT_PATH="$RUNNER_TEMP/developer-id.p12"
+          echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode > "$CERT_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+          security default-keychain -d user -s "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+
+      - name: Store notarytool profile
+        env:
+          APPLE_ID: ${{ secrets.APPLE_NOTARY_APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+        run: |
+          xcrun notarytool store-credentials "codex-lobster-notary" \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APPLE_APP_SPECIFIC_PASSWORD"
+
+      - name: Prepare Sparkle private key
+        id: sparkle_key
+        env:
+          SPARKLE_PRIVATE_ED_KEY_BASE64: ${{ secrets.SPARKLE_PRIVATE_ED_KEY_BASE64 }}
+        run: |
+          if [[ -n "${SPARKLE_PRIVATE_ED_KEY_BASE64:-}" ]]; then
+            KEY_PATH="$RUNNER_TEMP/sparkle-private-ed25519.key"
+            printf '%s' "$SPARKLE_PRIVATE_ED_KEY_BASE64" > "$KEY_PATH"
+            echo "path=$KEY_PATH" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Resolve release notes markdown
+        id: release_notes
+        run: |
+          VERSION="${APP_VERSION#v}"
+          NOTES_PATH=""
+          if [[ -f "docs/release-notes/${VERSION}.md" ]]; then
+            NOTES_PATH="docs/release-notes/${VERSION}.md"
+          elif [[ -f "docs/release-notes/latest.md" ]]; then
+            NOTES_PATH="docs/release-notes/latest.md"
+          fi
+          echo "path=$NOTES_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Build signed and notarized release
+        env:
+          APPLE_DEVELOPER_IDENTITY: ${{ secrets.APPLE_DEVELOPER_IDENTITY }}
+          APPLE_NOTARY_PROFILE: codex-lobster-notary
+          SPARKLE_PUBLIC_ED_KEY: ${{ secrets.SPARKLE_PUBLIC_ED_KEY }}
+          DOWNLOAD_BASE_URL: ${{ vars.DOWNLOAD_BASE_URL }}
+          APPCAST_URL: ${{ vars.APPCAST_URL }}
+          RELEASE_NOTES_URL: ${{ vars.RELEASE_NOTES_URL }}
+        run: |
+          VERSION="${APP_VERSION#v}"
+          RELEASE_NOTES_MARKDOWN="${{ steps.release_notes.outputs.path }}"
+          RELEASE_ARGS=(
+            --version "$VERSION"
+            --build "$APP_BUILD"
+          )
+          if [[ -n "${DOWNLOAD_BASE_URL:-}" && -n "${APPCAST_URL:-}" ]]; then
+            RELEASE_ARGS+=(
+              --download-base-url "$DOWNLOAD_BASE_URL"
+              --appcast-url "$APPCAST_URL"
+            )
+          fi
+          if [[ -n "${RELEASE_NOTES_URL:-}" ]]; then
+            RELEASE_ARGS+=(
+              --release-notes-url "$RELEASE_NOTES_URL"
+            )
+          fi
+          if [[ -n "$RELEASE_NOTES_MARKDOWN" ]]; then
+            RELEASE_ARGS+=(
+              --release-notes-markdown "$RELEASE_NOTES_MARKDOWN"
+            )
+          fi
+          if [[ -n "${{ steps.sparkle_key.outputs.path }}" ]]; then
+            RELEASE_ARGS+=(
+              --sparkle-private-ed-key-file "${{ steps.sparkle_key.outputs.path }}"
+            )
+          fi
+          ./scripts/release-app.sh "${RELEASE_ARGS[@]}"
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: CodexLobsterIsland-${{ env.APP_VERSION }}-${{ env.APP_BUILD }}
+          if-no-files-found: ignore
+          path: |
+            dist/CodexLobsterIsland.app
+            dist/CodexLobsterIsland-*.zip
+            dist/feed/*
+            dist/release-notes/*
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') && steps.release_notes.outputs.path != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Codex Lobster Island ${{ env.APP_VERSION }}
+          body_path: ${{ steps.release_notes.outputs.path }}
+          fail_on_unmatched_files: false
+          files: |
+            dist/CodexLobsterIsland-*.zip
+            dist/feed/*
+            dist/release-notes/*

@@ -43,29 +43,29 @@ final class MockStatusGenerator: CodexStatusProviding, CodexStatusControllable {
 
     static func defaultSnapshots(referenceDate: Date = .now) -> [CodexStatusSnapshot] {
         let idleTask = CodexTask(
-            title: "Waiting for work",
-            detail: "Codex is standing by.",
+            title: "等待任务",
+            detail: "Codex 正在待命。",
             state: .idle,
             startedAt: referenceDate,
             updatedAt: referenceDate
         )
         let runningTask = CodexTask(
-            title: "Implementing floating island",
-            detail: "Composing views and services.",
+            title: "正在实现浮动岛",
+            detail: "正在组合视图与服务层。",
             state: .running,
             startedAt: referenceDate.addingTimeInterval(10),
             updatedAt: referenceDate.addingTimeInterval(10)
         )
         let successTask = CodexTask(
-            title: "Build completed",
-            detail: "Latest mock task finished cleanly.",
+            title: "构建完成",
+            detail: "最近一次模拟任务已顺利结束。",
             state: .success,
             startedAt: referenceDate.addingTimeInterval(20),
             updatedAt: referenceDate.addingTimeInterval(20)
         )
         let errorTask = CodexTask(
-            title: "Build failed",
-            detail: "Needs attention before continuing.",
+            title: "构建失败",
+            detail: "继续之前需要先处理问题。",
             state: .error,
             startedAt: referenceDate.addingTimeInterval(30),
             updatedAt: referenceDate.addingTimeInterval(30)

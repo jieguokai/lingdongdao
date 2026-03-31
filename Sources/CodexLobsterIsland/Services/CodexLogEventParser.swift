@@ -75,9 +75,9 @@ enum CodexLogParsingError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case let .invalidState(value):
-            "Unsupported state '\(value)' in log event."
+            "日志事件中包含不支持的状态“\(value)”。"
         case let .unrecognizedLine(line):
-            "Could not parse log line: \(line)"
+            "无法解析日志行：\(line)"
         }
     }
 }

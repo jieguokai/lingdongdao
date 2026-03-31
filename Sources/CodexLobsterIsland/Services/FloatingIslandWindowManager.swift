@@ -59,7 +59,7 @@ final class FloatingIslandWindowManager {
         )
         panel.backgroundColor = .clear
         panel.isOpaque = false
-        panel.hasShadow = true
+        panel.hasShadow = false
         panel.level = .statusBar
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
         panel.hidesOnDeactivate = false
@@ -68,7 +68,11 @@ final class FloatingIslandWindowManager {
         panel.animationBehavior = .utilityWindow
 
         let controller = NSHostingController(rootView: AnyView(EmptyView()))
+        controller.view.wantsLayer = true
+        controller.view.layer?.backgroundColor = NSColor.clear.cgColor
         panel.contentViewController = controller
+        panel.contentView?.wantsLayer = true
+        panel.contentView?.layer?.backgroundColor = NSColor.clear.cgColor
         self.panel = panel
         self.hostingController = controller
     }

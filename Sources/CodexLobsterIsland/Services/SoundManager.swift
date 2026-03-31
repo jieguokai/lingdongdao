@@ -10,15 +10,8 @@ final class SoundManager {
 
     func play(for state: CodexState) {
         guard !isMuted else { return }
-
-        switch state {
-        case .success:
-            playResource(named: "success")
-        case .error:
-            playResource(named: "error")
-        default:
-            break
-        }
+        guard let resourceName = state.soundResourceName else { return }
+        playResource(named: resourceName)
     }
 
     private func playResource(named name: String) {
@@ -28,7 +21,7 @@ final class SoundManager {
             return
         }
 
-        guard let url = Bundle.module.url(forResource: name, withExtension: "wav", subdirectory: "Audio") else {
+        guard let url = AppAudioResourceLocator.url(forResource: name) else {
             NSSound.beep()
             return
         }

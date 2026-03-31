@@ -13,7 +13,7 @@ final class ProcessWatchingCodexProvider: CodexStatusProviding, CodexProviderIns
     private(set) var latestSnapshot: CodexStatusSnapshot
 
     var providerKind: CodexProviderKind { .processWatcher }
-    var providerStatusSummary: String { "Process Watcher" }
+    var providerStatusSummary: String { "进程监听" }
     var providerStatusDetail: String { "pgrep -fal \(processQuery)" }
     var lastProviderError: String? { lastErrorMessage }
 
@@ -28,8 +28,8 @@ final class ProcessWatchingCodexProvider: CodexStatusProviding, CodexProviderIns
 
         let timestamp = Date()
         let task = CodexTask(
-            title: "Watching local Codex processes",
-            detail: "Waiting for a process that matches '\(processQuery)'.",
+            title: "正在监听本地 Codex 进程",
+            detail: "等待匹配“\(processQuery)”的进程。",
             state: .idle,
             startedAt: timestamp,
             updatedAt: timestamp
@@ -78,7 +78,7 @@ final class ProcessWatchingCodexProvider: CodexStatusProviding, CodexProviderIns
                 lastObservedCommand = active.command
                 latestSnapshot = makeSnapshot(
                     state: .running,
-                    title: matches.count == 1 ? "Codex is running" : "Codex is running in \(matches.count) processes",
+                    title: matches.count == 1 ? "Codex 运行中" : "Codex 正在 \(matches.count) 个进程中运行",
                     detail: active.command,
                     now: now
                 )
@@ -86,15 +86,15 @@ final class ProcessWatchingCodexProvider: CodexStatusProviding, CodexProviderIns
                 wasRunning = false
                 latestSnapshot = makeSnapshot(
                     state: .success,
-                    title: "Codex activity finished",
-                    detail: lastObservedCommand ?? "Last observed Codex process exited cleanly.",
+                    title: "Codex 活动已结束",
+                    detail: lastObservedCommand ?? "最近检测到的 Codex 进程已正常退出。",
                     now: now
                 )
             } else {
                 latestSnapshot = makeSnapshot(
                     state: .idle,
-                    title: "Watching local Codex processes",
-                    detail: "No active process matches '\(processQuery)'.",
+                    title: "正在监听本地 Codex 进程",
+                    detail: "当前没有匹配“\(processQuery)”的活动进程。",
                     now: now
                 )
             }
@@ -103,7 +103,7 @@ final class ProcessWatchingCodexProvider: CodexStatusProviding, CodexProviderIns
             lastErrorMessage = error.localizedDescription
             latestSnapshot = makeSnapshot(
                 state: .error,
-                title: "Process watcher failed",
+                title: "进程监听失败",
                 detail: error.localizedDescription,
                 now: now
             )

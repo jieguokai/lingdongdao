@@ -3,98 +3,68 @@ import SwiftUI
 struct LobsterAvatarView: View {
     let state: CodexState
     let animationsEnabled: Bool
+    var interactionPhase: InteractivePhase = .resting
+    var contentPadding: CGFloat = 6
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 24.0)) { context in
-            let phase = context.date.timeIntervalSinceReferenceDate
-            let metrics = motionMetrics(phase: phase)
+            let timelinePhase = context.date.timeIntervalSinceReferenceDate
+            let pixels = PixelLobsterSprite.pixels(for: state, tick: frameTick(for: timelinePhase))
+            let bounds = PixelLobsterSprite.renderBounds
+            let interaction = InteractionStyle.lobster(
+                for: interactionPhase,
+                animationsEnabled: animationsEnabled
+            )
+            let swayOffset = animationsEnabled
+                ? CGFloat(sin(timelinePhase * 6.0)) * interaction.sway
+                : 0.0
 
-            ZStack {
-                Circle()
-                    .fill(glowColor.opacity(0.18))
-                    .blur(radius: 8)
-                    .scaleEffect(1.15)
+            GeometryReader { proxy in
+                let availableWidth = max(proxy.size.width - (contentPadding * 2), 1)
+                let availableHeight = max(proxy.size.height - (contentPadding * 2), 1)
+                let spriteWidth = CGFloat(bounds.width)
+                let spriteHeight = CGFloat(bounds.height)
+                let pixel = min(availableWidth / spriteWidth, availableHeight / spriteHeight)
+                let xInset = contentPadding + ((availableWidth - (spriteWidth * pixel)) / 2)
+                let yInset = contentPadding + ((availableHeight - (spriteHeight * pixel)) / 2)
 
-                GeometryReader { proxy in
-                    let pixel = min(proxy.size.width, proxy.size.height) / 16
-                    ForEach(PixelLobsterShape.pixels) { square in
-                        RoundedRectangle(cornerRadius: pixel * 0.16, style: .continuous)
-                            .fill(color(for: square.role))
-                            .frame(width: pixel * 0.92, height: pixel * 0.92)
-                            .position(
-                                x: (CGFloat(square.x) + 0.5) * pixel,
-                                y: (CGFloat(square.y) + 0.5) * pixel
-                            )
-                    }
+                ForEach(pixels) { square in
+                    RoundedRectangle(cornerRadius: pixel * 0.16, style: .continuous)
+                        .fill(color(for: square))
+                        .frame(width: pixel * 0.92, height: pixel * 0.92)
+                        .position(
+                            x: xInset + (CGFloat(square.x - bounds.minX) + 0.5) * pixel,
+                            y: yInset + (CGFloat(square.y - bounds.minY) + 0.5) * pixel
+                        )
                 }
             }
-            .padding(6)
-            .scaleEffect(metrics.scale)
-            .rotationEffect(metrics.rotation)
-            .offset(x: metrics.xOffset, y: metrics.yOffset)
+            .scaleEffect(interaction.scale)
+            .offset(x: swayOffset, y: interaction.yOffset)
+            .animation(.spring(response: 0.24, dampingFraction: 0.76), value: interactionPhase)
         }
     }
 
-    private var glowColor: Color {
-        switch state {
-        case .idle:
-            .blue
-        case .running:
-            .teal
-        case .success:
-            .green
-        case .error:
-            .red
-        }
-    }
-
-    private func color(for role: PixelLobsterShape.Pixel.Role) -> Color {
-        switch role {
+    private func color(for pixel: PixelLobsterSprite.Pixel) -> Color {
+        switch pixel.role {
         case .shell:
-            return state == .error ? Color.red.opacity(0.95) : Color.orange.opacity(0.95)
+            let base = state == .error
+                ? Color(.sRGB, red: 0.96, green: 0.34, blue: 0.31, opacity: 1)
+                : Color(.sRGB, red: 1.0, green: 0.57, blue: 0.23, opacity: 1)
+            return base.opacity(0.92)
         case .claw:
-            return state == .success ? Color.green.opacity(0.95) : Color.pink.opacity(0.95)
+            let base = state == .success
+                ? Color(.sRGB, red: 0.35, green: 0.85, blue: 0.56, opacity: 1)
+                : Color(.sRGB, red: 1.0, green: 0.42, blue: 0.46, opacity: 1)
+            return base.opacity(0.92)
         case .belly:
-            return Color.white.opacity(0.9)
+            return Color(.sRGB, white: 0.97, opacity: 0.94)
         case .eye:
-            return Color.black.opacity(0.9)
+            return Color.black.opacity(0.94)
         }
     }
 
-    private func motionMetrics(phase: TimeInterval) -> (scale: CGFloat, rotation: Angle, xOffset: CGFloat, yOffset: CGFloat) {
-        guard animationsEnabled else {
-            return (1.0, .degrees(0), 0, 0)
-        }
-
-        switch state {
-        case .idle:
-            return (
-                0.98 + (sin(phase * 2.2) * 0.04),
-                .degrees(0),
-                0,
-                sin(phase * 2.2) * -1.8
-            )
-        case .running:
-            return (
-                1.0,
-                .degrees(sin(phase * 10.0) * 6),
-                sin(phase * 10.0) * 2.8,
-                cos(phase * 10.0) * -1.4
-            )
-        case .success:
-            return (
-                1.0 + abs(sin(phase * 7.0)) * 0.12,
-                .degrees(sin(phase * 7.0) * 10),
-                0,
-                abs(cos(phase * 7.0)) * -5.0
-            )
-        case .error:
-            return (
-                1.0,
-                .degrees(sin(phase * 18.0) * 3),
-                sin(phase * 18.0) * 5.0,
-                0
-            )
-        }
+    private func frameTick(for phase: TimeInterval) -> Int {
+        guard animationsEnabled else { return 0 }
+        return Int((phase * PixelLobsterSprite.tickRate(for: state)).rounded(.down))
     }
 }

@@ -3,102 +3,210 @@ import SwiftUI
 
 struct MenuBarStatusView: View {
     let statusService: CodexStatusService
+    let appUpdateService: AppUpdateService
     @Bindable var settingsStore: SettingsStore
     let launchAtLoginManager: LaunchAtLoginManager
+    @State private var isProviderListExpanded = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label(statusService.currentState.displayName, systemImage: statusService.currentState.symbolName)
-                .font(.headline)
+        let accentColor = IslandStyle.accent(for: statusService.currentState)
+        let headerSummary = statusService.providerStatusSummary == statusService.currentTask.title
+            ? statusService.currentState.subtitle
+            : statusService.providerStatusSummary
 
-            Text(statusService.currentTask.title)
-                .font(.subheadline.weight(.semibold))
-                .lineLimit(1)
-
-            Text(statusService.currentTask.detail)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(2)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(statusService.providerStatusSummary)
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 6) {
+                Label(statusService.currentState.displayName, systemImage: statusService.currentState.symbolName)
                     .font(.caption.weight(.semibold))
-                Text(statusService.providerStatusDetail)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
+                    .foregroundStyle(IslandStyle.secondaryText)
 
-            if let providerError = statusService.lastProviderError {
-                Text(providerError)
-                    .font(.caption2)
-                    .foregroundStyle(.orange)
-                    .lineLimit(2)
-            }
+                Text(statusService.currentTask.title)
+                    .font(.subheadline.weight(.semibold))
+                    .lineLimit(1)
 
-            Divider()
-
-            Button(settingsStore.settings.showsIsland ? "Hide Island" : "Show Island") {
-                settingsStore.update { $0.showsIsland.toggle() }
-            }
-
-            Toggle("Mute Sounds", isOn: toggleBinding(\.isMuted))
-            Toggle("Enable Animations", isOn: toggleBinding(\.animationsEnabled))
-            Toggle("Launch at Login", isOn: toggleBinding(\.launchAtLoginEnabled))
-
-            Divider()
-
-            Menu("Status Source") {
-                ForEach(CodexProviderKind.allCases) { kind in
-                    Button(kind.displayName) {
-                        settingsStore.update { $0.providerKind = kind }
-                    }
-                }
-            }
-
-            Button("Copy Source Info") {
-                let pasteboard = NSPasteboard.general
-                pasteboard.clearContents()
-                pasteboard.setString(
-                    "\(statusService.providerStatusSummary)\n\(statusService.providerStatusDetail)",
-                    forType: .string
-                )
-            }
-
-            Divider()
-
-            Button(statusService.canManuallyTransition ? "Next Mock State" : "Refresh Source") {
-                statusService.advance()
-            }
-
-            Button("Clear History") {
-                statusService.clearHistory()
-            }
-
-            if statusService.canManuallyTransition {
-                Divider()
-                Text("Set Mock State")
+                Text(headerSummary)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
-                ForEach(CodexState.allCases, id: \.self) { state in
-                    Button(state.displayName) {
-                        statusService.setPreviewState(state)
+                    .foregroundStyle(IslandStyle.tertiaryText)
+                    .lineLimit(1)
+
+                if let providerError = statusService.lastProviderError {
+                    Text(providerError)
+                        .font(.caption2)
+                        .foregroundStyle(.orange.opacity(0.9))
+                        .lineLimit(1)
+                }
+            }
+            .padding(.bottom, 10)
+
+            Divider()
+                .padding(.bottom, 10)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Button(settingsStore.settings.showsIsland ? "隐藏浮动岛" : "显示浮动岛") {
+                    settingsStore.update { $0.showsIsland.toggle() }
+                }
+                .buttonStyle(menuButtonStyle(accentColor))
+
+                InteractiveFeedbackRow(
+                    accentColor: accentColor,
+                    animationsEnabled: settingsStore.settings.animationsEnabled,
+                    fillOpacity: 0.05,
+                    isCompact: true
+                ) {
+                    Toggle("静音提示音", isOn: toggleBinding(\.isMuted))
+                }
+
+                InteractiveFeedbackRow(
+                    accentColor: accentColor,
+                    animationsEnabled: settingsStore.settings.animationsEnabled,
+                    fillOpacity: 0.05,
+                    isCompact: true
+                ) {
+                    Toggle("启用动画", isOn: toggleBinding(\.animationsEnabled))
+                }
+
+                InteractiveFeedbackRow(
+                    accentColor: accentColor,
+                    animationsEnabled: settingsStore.settings.animationsEnabled,
+                    fillOpacity: 0.05,
+                    isCompact: true
+                ) {
+                    Toggle("登录时启动", isOn: toggleBinding(\.launchAtLoginEnabled))
+                }
+            }
+            .padding(.bottom, 10)
+
+            Divider()
+                .padding(.bottom, 10)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("来源：\(statusService.providerStatusSummary)")
+                    .font(.caption)
+                    .foregroundStyle(IslandStyle.tertiaryText)
+                    .lineLimit(1)
+
+                Button {
+                    withAnimation(.easeOut(duration: 0.16)) {
+                        isProviderListExpanded.toggle()
+                    }
+                } label: {
+                    HStack {
+                        Text("状态来源")
+                        Spacer()
+                        Text(settingsStore.settings.providerKind.displayName)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                        Image(systemName: isProviderListExpanded ? "chevron.up" : "chevron.down")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(menuButtonStyle(accentColor))
+
+                if isProviderListExpanded {
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(CodexProviderKind.allCases) { kind in
+                            Button {
+                                settingsStore.update { $0.providerKind = kind }
+                                isProviderListExpanded = false
+                            } label: {
+                                HStack {
+                                    Image(systemName: settingsStore.settings.providerKind == kind ? "checkmark" : "circle")
+                                        .font(.caption2.weight(.bold))
+                                        .foregroundStyle(settingsStore.settings.providerKind == kind ? accentColor : IslandStyle.tertiaryText)
+                                    Text(kind.displayName)
+                                        .lineLimit(1)
+                                    Spacer()
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(menuButtonStyle(accentColor))
+                        }
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+
+                Button("复制来源信息") {
+                    let pasteboard = NSPasteboard.general
+                    pasteboard.clearContents()
+                    pasteboard.setString(
+                        "\(statusService.providerStatusSummary)\n\(statusService.providerStatusDetail)",
+                        forType: .string
+                    )
+                }
+                .buttonStyle(menuButtonStyle(accentColor))
+            }
+            .padding(.bottom, 10)
+
+            Divider()
+                .padding(.bottom, 10)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Button("检查更新…") {
+                    appUpdateService.checkForUpdates()
+                }
+                .buttonStyle(menuButtonStyle(accentColor))
+                .disabled(!appUpdateService.canCheckForUpdates)
+
+                if appUpdateService.isAvailable {
+                    Text(appUpdateService.statusDescription)
+                        .font(.caption2)
+                        .foregroundStyle(IslandStyle.tertiaryText)
+                        .lineLimit(2)
+                }
+
+                Button(statusService.canManuallyTransition ? "切换到下一个模拟状态" : "刷新当前来源") {
+                    statusService.advance()
+                }
+                .buttonStyle(menuButtonStyle(accentColor))
+
+                Button("清空历史") {
+                    statusService.clearHistory()
+                }
+                .buttonStyle(menuButtonStyle(.orange))
+
+                if statusService.canManuallyTransition {
+                    Text("设置模拟状态")
+                        .font(.caption2)
+                        .foregroundStyle(IslandStyle.tertiaryText)
+
+                    ForEach(CodexState.allCases, id: \.self) { state in
+                        Button(state.displayName) {
+                            statusService.setPreviewState(state)
+                        }
+                        .buttonStyle(menuButtonStyle(IslandStyle.accent(for: state)))
                     }
                 }
             }
+            .padding(.bottom, 10)
 
             Divider()
+                .padding(.bottom, 10)
 
-            SettingsLink {
-                Text("Settings…")
-            }
+            HStack(spacing: 6) {
+                InteractiveFeedbackRow(
+                    accentColor: accentColor,
+                    animationsEnabled: settingsStore.settings.animationsEnabled,
+                    fillOpacity: 0.05,
+                    isCompact: true
+                ) {
+                    SettingsLink {
+                        Text("设置…")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
 
-            Button("Quit Codex Lobster Island") {
-                NSApp.terminate(nil)
+                Button("退出") {
+                    NSApp.terminate(nil)
+                }
+                .buttonStyle(menuButtonStyle(.red))
             }
         }
-        .padding(12)
-        .frame(width: 280)
+        .padding(10)
+        .frame(width: 248)
     }
 
     private func toggleBinding(_ keyPath: WritableKeyPath<AppSettings, Bool>) -> Binding<Bool> {
@@ -107,6 +215,17 @@ struct MenuBarStatusView: View {
             set: { newValue in
                 settingsStore.update { $0[keyPath: keyPath] = newValue }
             }
+        )
+    }
+
+    private func menuButtonStyle(_ color: Color) -> InteractiveButtonStyle {
+        InteractiveButtonStyle(
+            prominence: .subtle,
+            accentColor: color,
+            cornerRadius: 12,
+            fillOpacity: 0.06,
+            animationsEnabled: settingsStore.settings.animationsEnabled,
+            expandsHorizontally: true
         )
     }
 }
