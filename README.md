@@ -6,6 +6,12 @@ Codex Lobster Island is a native macOS floating status island plus menu bar util
 
 This repository is intended for public development and distribution. Build artifacts, packaged apps, private release credentials, and local machine state are excluded from version control.
 
+Project docs:
+
+- [License](/Users/kevin/Documents/01_开发项目/lingdongdao/LICENSE)
+- [Contributing](/Users/kevin/Documents/01_开发项目/lingdongdao/CONTRIBUTING.md)
+- [Security](/Users/kevin/Documents/01_开发项目/lingdongdao/SECURITY.md)
+
 ## Run
 
 ```bash
