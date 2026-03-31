@@ -12,6 +12,7 @@ Project docs:
 - [Code of Conduct](/Users/kevin/Documents/01_开发项目/lingdongdao/CODE_OF_CONDUCT.md)
 - [Contributing](/Users/kevin/Documents/01_开发项目/lingdongdao/CONTRIBUTING.md)
 - [Security](/Users/kevin/Documents/01_开发项目/lingdongdao/SECURITY.md)
+- [GitHub Profile Suggestions](/Users/kevin/Documents/01_开发项目/lingdongdao/docs/github-repository-profile.md)
 
 ## Run
 
