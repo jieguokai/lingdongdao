@@ -127,6 +127,9 @@ struct SettingsView: View {
                     accentColor: accentColor,
                     animationsEnabled: settingsStore.settings.animationsEnabled
                 ) { phase in
+                    let currentSessionID = statusService.currentProviderSession?.id
+                    let recentSessions = statusService.recentProviderSessions.filter { $0.id != currentSessionID }
+
                     InteractiveFeedbackRow(
                         accentColor: accentColor,
                         animationsEnabled: settingsStore.settings.animationsEnabled
@@ -195,13 +198,54 @@ struct SettingsView: View {
                         }
                     }
 
-                    if !statusService.recentProviderSessions.isEmpty {
+                    if let currentSession = statusService.currentProviderSession {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("当前会话")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+
+                            InteractiveFeedbackRow(
+                                accentColor: IslandStyle.accent(for: currentSession.state),
+                                animationsEnabled: settingsStore.settings.animationsEnabled,
+                                fillOpacity: 0.05
+                            ) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                        StatusBadgeView(state: currentSession.state, compact: true)
+                                        Text(currentSession.commandName ?? currentSession.title)
+                                            .font(.subheadline.weight(.medium))
+                                        Spacer(minLength: 8)
+                                        Text(currentSession.timestamp.shortRelativeString)
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                    }
+
+                                    Text(currentSession.primarySummary)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(3)
+
+                                    Text(currentSession.metadataSummary)
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+
+                                    Text(currentSession.threadID)
+                                        .font(.caption2.monospaced())
+                                        .foregroundStyle(.secondary)
+                                        .textSelection(.enabled)
+                                }
+                            }
+                        }
+                    }
+
+                    if !recentSessions.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("最近会话")
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(.secondary)
 
-                            ForEach(statusService.recentProviderSessions.prefix(4)) { session in
+                            ForEach(recentSessions.prefix(4)) { session in
                                 InteractiveFeedbackRow(
                                     accentColor: IslandStyle.accent(for: session.state),
                                     animationsEnabled: settingsStore.settings.animationsEnabled,

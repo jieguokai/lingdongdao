@@ -13,6 +13,7 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
     private var currentCommandName: String?
     private var lastExitCode: Int?
     private let codexBinaryPath: String?
+    private(set) var currentProviderSession: CodexProviderSessionSummary?
     private(set) var recentProviderSessions: [CodexProviderSessionSummary] = []
     private(set) var latestSnapshot: CodexStatusSnapshot
 
@@ -93,6 +94,7 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
             self.currentSessionID = bootstrap.sessionID
             self.currentCommandName = bootstrap.commandName
             self.lastExitCode = bootstrap.exitCode
+            self.currentProviderSession = bootstrap.sessionSummary
         }
         self.recentProviderSessions = Self.loadRecentSessions(from: logFileURL, fileManager: fileManager, parser: parser)
     }
@@ -112,6 +114,7 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
                 self.currentSessionID = result.sessionID
                 self.currentCommandName = result.commandName
                 self.lastExitCode = result.exitCode
+                self.currentProviderSession = result.sessionSummary
             }
             self.recentProviderSessions = Self.loadRecentSessions(from: self.logFileURL, fileManager: self.fileManager, parser: self.parser)
             self.onUpdate?(self.latestSnapshot)
@@ -140,6 +143,7 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
         currentSessionID = result.sessionID
         currentCommandName = result.commandName
         lastExitCode = result.exitCode
+        currentProviderSession = result.sessionSummary
         recentProviderSessions = Self.loadRecentSessions(from: logFileURL, fileManager: fileManager, parser: parser)
     }
 
@@ -173,7 +177,8 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
                 errorMessage: nil,
                 sessionID: event.sessionID,
                 commandName: event.command,
-                exitCode: event.exitCode
+                exitCode: event.exitCode,
+                sessionSummary: makeSessionSummary(from: event)
             )
         } catch {
             let snapshot = makeErrorSnapshot(logFileURL: logFileURL, detail: error.localizedDescription)
@@ -182,9 +187,25 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
                 errorMessage: error.localizedDescription,
                 sessionID: nil,
                 commandName: nil,
-                exitCode: nil
+                exitCode: nil,
+                sessionSummary: nil
             )
         }
+    }
+
+    private static func makeSessionSummary(from event: CodexLogEvent) -> CodexProviderSessionSummary? {
+        guard let sessionID = event.sessionID else { return nil }
+        return CodexProviderSessionSummary(
+            id: sessionID,
+            state: event.state,
+            title: event.title,
+            detail: event.detail,
+            commandName: event.command,
+            exitCode: event.exitCode,
+            responsePreview: event.responsePreview,
+            usageSummary: event.usageSummary,
+            timestamp: event.timestamp
+        )
     }
 
     private static func loadRecentSessions(
@@ -307,4 +328,5 @@ private struct SnapshotLoadResult {
     let sessionID: String?
     let commandName: String?
     let exitCode: Int?
+    let sessionSummary: CodexProviderSessionSummary?
 }

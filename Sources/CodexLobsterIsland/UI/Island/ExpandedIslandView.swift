@@ -11,7 +11,12 @@ struct ExpandedIslandView: View {
         let titleOffset = interactionPhase == .pressed ? 0.8 : 0.0
         let timestampOpacity = interactionPhase == .hovered ? 0.86 : 0.70
         let historyEntries = Array(statusService.history)
-        let providerSessions = Array(statusService.recentProviderSessions.prefix(3))
+        let currentSessionID = statusService.currentProviderSession?.id
+        let providerSessions = Array(
+            statusService.recentProviderSessions
+                .filter { $0.id != currentSessionID }
+                .prefix(3)
+        )
 
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 14) {
@@ -125,6 +130,46 @@ struct ExpandedIslandView: View {
             }
             .padding(.horizontal, 8)
             .padding(.bottom, 12)
+
+            if let currentSession = statusService.currentProviderSession {
+                sectionDivider
+                    .padding(.bottom, 12)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("当前会话")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(IslandStyle.tertiaryText)
+
+                    HStack(alignment: .firstTextBaseline, spacing: 10) {
+                        StatusBadgeView(state: currentSession.state, compact: true)
+                            .frame(minWidth: 60, alignment: .leading)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(currentSession.commandName ?? currentSession.title)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.white.opacity(0.92))
+                                .lineLimit(1)
+                            Text(currentSession.primarySummary)
+                                .font(.caption2)
+                                .foregroundStyle(.white.opacity(0.82))
+                                .lineLimit(3)
+                            Text(currentSession.metadataSummary)
+                                .font(.caption2)
+                                .foregroundStyle(IslandStyle.tertiaryText)
+                                .lineLimit(1)
+                            Text(currentSession.threadID)
+                                .font(.caption2.monospaced())
+                                .foregroundStyle(IslandStyle.tertiaryText)
+                                .lineLimit(1)
+                        }
+                        Spacer(minLength: 8)
+                        Text(currentSession.timestamp.shortRelativeString)
+                            .font(.caption2)
+                            .foregroundStyle(IslandStyle.tertiaryText)
+                    }
+                }
+                .padding(.horizontal, 8)
+                .padding(.bottom, 12)
+            }
 
             if !providerSessions.isEmpty {
                 sectionDivider

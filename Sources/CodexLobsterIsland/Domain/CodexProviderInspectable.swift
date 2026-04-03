@@ -9,6 +9,7 @@ protocol CodexProviderInspectable: AnyObject {
     var providerConnectionLabel: String? { get }
     var providerConnectionDetail: String? { get }
     var isProviderConnected: Bool { get }
+    var currentProviderSession: CodexProviderSessionSummary? { get }
     var recentProviderSessions: [CodexProviderSessionSummary] { get }
 }
 
@@ -16,5 +17,6 @@ extension CodexProviderInspectable {
     var providerConnectionLabel: String? { nil }
     var providerConnectionDetail: String? { nil }
     var isProviderConnected: Bool { false }
+    var currentProviderSession: CodexProviderSessionSummary? { nil }
     var recentProviderSessions: [CodexProviderSessionSummary] { [] }
 }
