@@ -158,7 +158,11 @@ def run_native_json_bridge(
             emit_event(**mapped.bridge_event)
 
     return_code = process.wait()
-    final_detail = compose_final_detail(detail, bridge_state)
+    final_detail = compose_final_detail(
+        fallback_detail=detail,
+        bridge_state=bridge_state,
+        exit_code=return_code if return_code != 0 else None,
+    )
 
     if return_code == 0:
         emit_event(
@@ -311,11 +315,12 @@ def map_native_event(
         thread_id = native_event.get("thread_id")
         if isinstance(thread_id, str) and thread_id:
             session_id = thread_id
+        thread_detail = summarize_thread_detail(session_id=session_id, fallback_detail=fallback_detail)
         return MappedNativeEvent(
             bridge_event=dict(
                 state="running",
                 title="Codex 会话已建立",
-                detail=fallback_detail,
+                detail=thread_detail,
                 command_name=command_name,
                 arguments=original_args,
                 session_id=session_id,
@@ -391,7 +396,12 @@ def map_native_event(
     return MappedNativeEvent(bridge_event=None, session_id=session_id)
 
 
-def compose_final_detail(fallback_detail: str, bridge_state: NativeBridgeState) -> str:
+def compose_final_detail(
+    *,
+    fallback_detail: str,
+    bridge_state: NativeBridgeState,
+    exit_code: Optional[int] = None,
+) -> str:
     parts: List[str] = []
     base = summarize_detail(fallback_detail)
     if base:
@@ -400,6 +410,8 @@ def compose_final_detail(fallback_detail: str, bridge_state: NativeBridgeState) 
         parts.append(bridge_state.latest_agent_message)
     if bridge_state.latest_usage_summary and bridge_state.latest_usage_summary not in parts:
         parts.append(bridge_state.latest_usage_summary)
+    if exit_code is not None:
+        parts.append(f"exit {exit_code}")
     return " · ".join(parts) if parts else "Codex CLI 会话已结束"
 
 
@@ -430,6 +442,13 @@ def summarize_usage(usage: Any) -> Optional[str]:
         return None
 
     return "tokens " + " · ".join(token_parts)
+
+
+def summarize_thread_detail(*, session_id: str, fallback_detail: str) -> str:
+    base = summarize_detail(fallback_detail)
+    if base:
+        return f"线程 {session_id} · {base}"
+    return f"线程 {session_id}"
 
 
 def command_context(args: List[str]) -> Tuple[str, str, str]:

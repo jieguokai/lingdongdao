@@ -38,9 +38,9 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
     var providerConnectionDetail: String? {
         let sessionLine = currentSessionID.map { sessionID in
             if let currentCommandName {
-                return "当前会话：\(sessionID) · \(currentCommandName)"
+                return "当前线程：\(sessionID) · \(currentCommandName)"
             }
-            return "当前会话：\(sessionID)"
+            return "当前线程：\(sessionID)"
         }
         let binaryLine = codexBinaryPath.map { "CLI：\($0)" } ?? "未发现 codex 可执行文件，可设置 CODEX_LOBSTER_CODEX_BIN。"
         let exitLine = lastExitCode.map { "最近退出码：\($0)" }

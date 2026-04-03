@@ -60,6 +60,7 @@ Notes:
 - `scripts/codex-bridge.py` uses `CODEX_LOBSTER_CODEX_BIN` first, then `which codex`, then `/Applications/Codex.app/Contents/Resources/codex`.
 - `exec`, `resume`, and `review` prefer native JSONL output when the installed Codex subcommand supports `--json`.
 - Final session summaries now fold native agent reply snippets and token usage into the bridge detail, so copied diagnostics are closer to Codex's real session output.
+- Native `thread_id` is surfaced directly in bridge diagnostics, so the island can show which Codex thread the latest session belongs to.
 - Events are appended to `~/.codex-lobster-island/codex-events.jsonl` by default.
 - Live updates are pushed to `tcp://127.0.0.1:45541` by default.
 - Each bridge invocation gets a `sessionId`, or you can provide one explicitly with `CODEX_LOBSTER_SESSION_ID`.

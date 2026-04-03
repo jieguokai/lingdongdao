@@ -85,6 +85,8 @@ grep -q '"state":"running"' "$CAPTURE_FILE"
 grep -q '"state":"success"' "$CAPTURE_FILE"
 grep -q '"command":"exec"' "$CAPTURE_FILE"
 grep -q '"sessionId":"native-thread-123"' "$CAPTURE_FILE"
+grep -q '"title":"Codex 会话已建立"' "$CAPTURE_FILE"
+grep -q '"detail":"线程 native-thread-123 · hello from codex bridge"' "$CAPTURE_FILE"
 grep -q '"title":"Codex 回合已完成"' "$CAPTURE_FILE"
 grep -q '"detail":"hello from codex bridge · Native bridge reply · tokens in 12 · out 7"' "$CAPTURE_FILE"
 
