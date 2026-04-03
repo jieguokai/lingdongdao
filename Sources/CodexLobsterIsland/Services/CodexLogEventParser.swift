@@ -11,6 +11,8 @@ package struct CodexLogEvent: Sendable {
     package let exitCode: Int?
     package let responsePreview: String?
     package let usageSummary: String?
+    package let phase: String?
+    package let errorSummary: String?
 }
 
 package struct CodexLogEventParser {
@@ -45,7 +47,9 @@ package struct CodexLogEventParser {
             sessionID: payload.sessionID,
             exitCode: payload.exitCode,
             responsePreview: payload.responsePreview,
-            usageSummary: payload.usageSummary
+            usageSummary: payload.usageSummary,
+            phase: payload.phase,
+            errorSummary: payload.errorSummary
         )
     }
 
@@ -79,7 +83,9 @@ package struct CodexLogEventParser {
             sessionID: dictionary["sessionId"] ?? dictionary["sessionID"],
             exitCode: dictionary["exitCode"].flatMap(Int.init),
             responsePreview: dictionary["responsePreview"],
-            usageSummary: dictionary["usageSummary"]
+            usageSummary: dictionary["usageSummary"],
+            phase: dictionary["phase"],
+            errorSummary: dictionary["errorSummary"]
         )
     }
 }
@@ -95,6 +101,8 @@ private struct JSONPayload: Decodable {
     let exitCode: Int?
     let responsePreview: String?
     let usageSummary: String?
+    let phase: String?
+    let errorSummary: String?
 
     private enum CodingKeys: String, CodingKey {
         case state
@@ -107,6 +115,8 @@ private struct JSONPayload: Decodable {
         case exitCode
         case responsePreview
         case usageSummary
+        case phase
+        case errorSummary
     }
 }
 

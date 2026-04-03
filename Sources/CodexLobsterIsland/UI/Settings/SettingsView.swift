@@ -235,6 +235,13 @@ struct SettingsView: View {
                                         .foregroundStyle(.secondary)
                                         .lineLimit(1)
 
+                                    if let errorSummary = currentSession.errorSummary {
+                                        Text(errorSummary)
+                                            .font(.caption2)
+                                            .foregroundStyle(.orange)
+                                            .lineLimit(2)
+                                    }
+
                                     Text(currentSession.threadID)
                                         .font(.caption2.monospaced())
                                         .foregroundStyle(.secondary)
@@ -274,6 +281,12 @@ struct SettingsView: View {
                                                 .font(.caption2)
                                                 .foregroundStyle(.secondary)
                                                 .lineLimit(1)
+                                            if let errorSummary = session.errorSummary {
+                                                Text(errorSummary)
+                                                    .font(.caption2)
+                                                    .foregroundStyle(.orange)
+                                                    .lineLimit(1)
+                                            }
                                             Text(session.threadID)
                                                 .font(.caption2.monospaced())
                                                 .foregroundStyle(.secondary)

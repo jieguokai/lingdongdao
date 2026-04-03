@@ -23,6 +23,7 @@ printf '%s\n' "$*" >> "${FAKE_CODEX_ARGS_FILE:-/dev/null}"
 if [[ " $* " == *" --json "* ]]; then
   printf '%s\n' '{"type":"thread.started","thread_id":"native-thread-123"}'
   printf '%s\n' '{"type":"turn.started"}'
+  printf '%s\n' '{"type":"error","message":"Reconnecting... retrying websocket"}'
   printf '%s\n' '{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"Native bridge reply"}}'
   printf '%s\n' '{"type":"turn.completed","usage":{"input_tokens":12,"output_tokens":7}}'
 else
@@ -80,16 +81,22 @@ grep -q '"state":"success"' "$LOG_FILE"
 grep -q '"command":"exec"' "$LOG_FILE"
 grep -q '"source":"codex-cli-bridge"' "$LOG_FILE"
 grep -q '"sessionId":"native-thread-123"' "$LOG_FILE"
+grep -q '"phase":"completed"' "$LOG_FILE"
 grep -q '"responsePreview":"Native bridge reply"' "$LOG_FILE"
 grep -q '"usageSummary":"tokens in 12 · out 7"' "$LOG_FILE"
+grep -q '"errorSummary":"Reconnecting... retrying websocket"' "$LOG_FILE"
 grep -q '"detail":"hello from codex bridge · Native bridge reply · tokens in 12 · out 7"' "$LOG_FILE"
 grep -q '"state":"running"' "$CAPTURE_FILE"
 grep -q '"state":"success"' "$CAPTURE_FILE"
 grep -q '"command":"exec"' "$CAPTURE_FILE"
 grep -q '"sessionId":"native-thread-123"' "$CAPTURE_FILE"
+grep -q '"phase":"thread_started"' "$CAPTURE_FILE"
 grep -q '"title":"Codex 会话已建立"' "$CAPTURE_FILE"
 grep -q '"detail":"线程 native-thread-123 · hello from codex bridge"' "$CAPTURE_FILE"
+grep -q '"phase":"reconnecting"' "$CAPTURE_FILE"
+grep -q '"errorSummary":"Reconnecting... retrying websocket"' "$CAPTURE_FILE"
 grep -q '"title":"Codex 回合已完成"' "$CAPTURE_FILE"
+grep -q '"phase":"turn_completed"' "$CAPTURE_FILE"
 grep -q '"detail":"hello from codex bridge · Native bridge reply · tokens in 12 · out 7"' "$CAPTURE_FILE"
 
 CAPTURE_FILE_WRAPPER="$TMP_DIR/socket-lines-wrapper.txt"
@@ -143,8 +150,10 @@ FAKE_CODEX_ARGS_FILE="$ARGS_FILE" \
 python3 "$ROOT/scripts/codex-bridge.py" resume "session-123" "follow up task" >/dev/null
 
 grep -q '"command":"resume"' "$LOG_FILE"
+grep -q '"phase":"completed"' "$LOG_FILE"
 grep -q '"responsePreview":"Native bridge reply"' "$LOG_FILE"
 grep -q '"usageSummary":"tokens in 12 · out 7"' "$LOG_FILE"
+grep -q '"errorSummary":"Reconnecting... retrying websocket"' "$LOG_FILE"
 grep -q '"detail":"恢复会话 session-123 · follow up task · Native bridge reply · tokens in 12 · out 7"' "$LOG_FILE"
 
 CODEX_LOBSTER_CODEX_BIN="$FAKE_CODEX" \
@@ -154,8 +163,10 @@ python3 "$ROOT/scripts/codex-bridge.py" review "target.swift" >/dev/null
 
 grep -q '"command":"review"' "$LOG_FILE"
 grep -q '"title":"Codex 审查已完成"' "$LOG_FILE"
+grep -q '"phase":"completed"' "$LOG_FILE"
 grep -q '"responsePreview":"Native bridge reply"' "$LOG_FILE"
 grep -q '"usageSummary":"tokens in 12 · out 7"' "$LOG_FILE"
+grep -q '"errorSummary":"Reconnecting... retrying websocket"' "$LOG_FILE"
 grep -q '"detail":"审查 target.swift · Native bridge reply · tokens in 12 · out 7"' "$LOG_FILE"
 grep -q '^exec review --json target.swift$' "$ARGS_FILE"
 

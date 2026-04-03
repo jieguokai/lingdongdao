@@ -47,6 +47,13 @@ struct MenuBarStatusView: View {
                         .font(.caption2)
                         .foregroundStyle(IslandStyle.tertiaryText)
                         .lineLimit(2)
+
+                    if let errorSummary = currentSession.errorSummary {
+                        Text(errorSummary)
+                            .font(.caption2)
+                            .foregroundStyle(.orange.opacity(0.9))
+                            .lineLimit(1)
+                    }
                 }
             }
             .padding(.bottom, 10)

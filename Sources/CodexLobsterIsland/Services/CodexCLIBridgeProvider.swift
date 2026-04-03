@@ -204,6 +204,8 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
             exitCode: event.exitCode,
             responsePreview: event.responsePreview,
             usageSummary: event.usageSummary,
+            phase: event.phase,
+            errorSummary: event.errorSummary,
             timestamp: event.timestamp
         )
     }
@@ -239,6 +241,8 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
                     exitCode: event.exitCode,
                     responsePreview: event.responsePreview,
                     usageSummary: event.usageSummary,
+                    phase: event.phase,
+                    errorSummary: event.errorSummary,
                     timestamp: event.timestamp
                 )
             )

@@ -17,6 +17,7 @@ class NativeBridgeState:
     session_id: str
     latest_agent_message: Optional[str] = None
     latest_usage_summary: Optional[str] = None
+    latest_error_summary: Optional[str] = None
 
 
 def main() -> int:
@@ -45,6 +46,7 @@ def main() -> int:
         command_name=command_name,
         arguments=args,
         session_id=session_id,
+        phase="started",
     )
 
     if supports_native_json(command_name):
@@ -67,6 +69,8 @@ def main() -> int:
             command_name=command_name,
             arguments=args,
             session_id=session_id,
+            phase="failed",
+            error_summary=str(error),
         )
         print(f"codex-bridge: {error}", file=sys.stderr)
         return 1
@@ -80,6 +84,7 @@ def main() -> int:
             arguments=args,
             exit_code=completed.returncode,
             session_id=session_id,
+            phase="completed",
         )
     else:
         emit_event(
@@ -90,6 +95,8 @@ def main() -> int:
             arguments=args,
             exit_code=completed.returncode,
             session_id=session_id,
+            phase="failed",
+            error_summary=f"exit {completed.returncode}",
         )
 
     return completed.returncode
@@ -126,6 +133,8 @@ def run_native_json_bridge(
             command_name=command_name,
             arguments=args,
             session_id=session_id,
+            phase="failed",
+            error_summary=str(error),
         )
         print(f"codex-bridge: {error}", file=sys.stderr)
         return 1
@@ -154,6 +163,8 @@ def run_native_json_bridge(
             bridge_state.latest_agent_message = mapped.agent_message
         if mapped.usage_summary is not None:
             bridge_state.latest_usage_summary = mapped.usage_summary
+        if mapped.error_summary is not None:
+            bridge_state.latest_error_summary = mapped.error_summary
         if mapped.bridge_event is not None:
             emit_event(**mapped.bridge_event)
 
@@ -175,6 +186,8 @@ def run_native_json_bridge(
             session_id=bridge_state.session_id,
             response_preview=bridge_state.latest_agent_message,
             usage_summary=bridge_state.latest_usage_summary,
+            phase="completed",
+            error_summary=bridge_state.latest_error_summary,
         )
     else:
         emit_event(
@@ -187,6 +200,8 @@ def run_native_json_bridge(
             session_id=bridge_state.session_id,
             response_preview=bridge_state.latest_agent_message,
             usage_summary=bridge_state.latest_usage_summary,
+            phase="failed",
+            error_summary=bridge_state.latest_error_summary or f"exit {return_code}",
         )
 
     return return_code
@@ -203,6 +218,8 @@ def emit_event(
     session_id: Optional[str] = None,
     response_preview: Optional[str] = None,
     usage_summary: Optional[str] = None,
+    phase: Optional[str] = None,
+    error_summary: Optional[str] = None,
 ) -> None:
     event = {
         "state": state,
@@ -222,6 +239,10 @@ def emit_event(
         event["responsePreview"] = response_preview
     if usage_summary is not None:
         event["usageSummary"] = usage_summary
+    if phase is not None:
+        event["phase"] = phase
+    if error_summary is not None:
+        event["errorSummary"] = error_summary
     payload = json.dumps(event, ensure_ascii=False, separators=(",", ":"))
     append_log_line(payload)
     send_socket_line(payload)
@@ -307,6 +328,7 @@ class MappedNativeEvent:
     session_id: Optional[str]
     agent_message: Optional[str] = None
     usage_summary: Optional[str] = None
+    error_summary: Optional[str] = None
 
 
 def map_native_event(
@@ -334,6 +356,7 @@ def map_native_event(
                 command_name=command_name,
                 arguments=original_args,
                 session_id=session_id,
+                phase="thread_started",
                 ),
             session_id=session_id,
         )
@@ -347,6 +370,7 @@ def map_native_event(
                 command_name=command_name,
                 arguments=original_args,
                 session_id=session_id,
+                phase="turn_started",
             ),
             session_id=session_id,
         )
@@ -365,6 +389,7 @@ def map_native_event(
                         command_name=command_name,
                         arguments=original_args,
                         session_id=session_id,
+                        phase="response_ready",
                     ),
                     session_id=session_id,
                     agent_message=message,
@@ -382,6 +407,7 @@ def map_native_event(
                     command_name=command_name,
                     arguments=original_args,
                     session_id=session_id,
+                    phase="turn_completed",
                 ),
                 session_id=session_id,
                 usage_summary=usage_summary,
@@ -399,8 +425,11 @@ def map_native_event(
                     command_name=command_name,
                     arguments=original_args,
                     session_id=session_id,
+                    phase="reconnecting" if reconnecting else "error",
+                    error_summary=message.strip(),
                 ),
                 session_id=session_id,
+                error_summary=message.strip(),
             )
 
     return MappedNativeEvent(bridge_event=None, session_id=session_id)
