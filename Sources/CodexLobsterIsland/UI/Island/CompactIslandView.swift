@@ -8,8 +8,6 @@ struct CompactIslandView: View {
 
     var body: some View {
         let state = statusService.currentState
-        let headlineOpacity = interactionPhase == .hovered ? 0.98 : 0.94
-        let headlineOffset = interactionPhase == .pressed ? 0.35 : 0.0
         let statusScale = interactionPhase == .hovered ? 1.08 : 1.0
 
         Button(action: onToggleExpanded) {
@@ -24,11 +22,9 @@ struct CompactIslandView: View {
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(state.dynamicIslandTitle)
-                        .font(.system(size: 12.5, weight: .semibold, design: .rounded))
-                        .foregroundStyle(IslandStyle.primaryText.opacity(headlineOpacity))
-                        .tracking(-0.15)
+                        .font(.system(size: 13.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(IslandStyle.compactTitleText)
                         .lineLimit(1)
-                        .offset(y: headlineOffset)
                         .animation(.spring(response: 0.22, dampingFraction: 0.80), value: interactionPhase)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

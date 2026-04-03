@@ -172,6 +172,10 @@ enum IslandStyle {
         Color.white.opacity(0.96)
     }
 
+    static var compactTitleText: Color {
+        Color(.sRGB, red: 0.99, green: 0.995, blue: 1.0, opacity: 1)
+    }
+
     static var secondaryText: Color {
         Color.white.opacity(0.78)
     }

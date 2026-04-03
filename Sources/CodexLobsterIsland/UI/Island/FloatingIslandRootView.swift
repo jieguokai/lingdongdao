@@ -19,8 +19,6 @@ struct FloatingIslandRootView: View {
             }
             return isHovered ? .hovered : .resting
         }()
-        let scale: CGFloat = isExpanded ? 1.0 : (interactionPhase == .pressed ? 0.994 : (interactionPhase == .hovered ? 1.002 : 1.0))
-        let yOffset: CGFloat = isExpanded ? 0.0 : (interactionPhase == .pressed ? 0.65 : (interactionPhase == .hovered ? -0.45 : 0.0))
         let auraOpacity: Double = {
             switch interactionPhase {
             case .resting: 0.14
@@ -84,10 +82,7 @@ struct FloatingIslandRootView: View {
         )
         .shadow(color: Color.black.opacity(isExpanded ? 0.34 : 0.28), radius: isExpanded ? 22 : 14, y: isExpanded ? 14 : 9)
         .clipShape(islandShape)
-        .compositingGroup()
         .contentShape(islandShape)
-        .scaleEffect(scale)
-        .offset(y: yOffset)
         .animation(.spring(response: 0.24, dampingFraction: 0.82), value: interactionPhase)
         .onHover { hovering in
             isHovered = hovering
