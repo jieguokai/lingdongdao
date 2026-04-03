@@ -89,8 +89,8 @@ enum IslandStyle {
     static var cardFill: LinearGradient {
         LinearGradient(
             colors: [
-                Color.white.opacity(0.085),
-                Color.white.opacity(0.045)
+                Color(.sRGB, red: 0.132, green: 0.148, blue: 0.184, opacity: 0.96),
+                Color(.sRGB, red: 0.106, green: 0.118, blue: 0.152, opacity: 0.98)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -100,8 +100,8 @@ enum IslandStyle {
     static func cardAccentWash(for state: CodexState) -> LinearGradient {
         LinearGradient(
             colors: [
-                accent(for: state).opacity(0.16),
-                accent(for: state).opacity(0.03),
+                accent(for: state).opacity(0.09),
+                accent(for: state).opacity(0.015),
                 .clear
             ],
             startPoint: .topLeading,
@@ -110,11 +110,11 @@ enum IslandStyle {
     }
 
     static var cardStroke: Color {
-        Color.white.opacity(0.08)
+        Color.white.opacity(0.11)
     }
 
     static var cardInnerStroke: Color {
-        Color.white.opacity(0.04)
+        Color.white.opacity(0.06)
     }
 
     static func avatarPlateFill(for state: CodexState) -> LinearGradient {
