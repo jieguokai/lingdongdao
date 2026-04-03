@@ -173,6 +173,8 @@ def run_native_json_bridge(
             arguments=args,
             exit_code=return_code,
             session_id=bridge_state.session_id,
+            response_preview=bridge_state.latest_agent_message,
+            usage_summary=bridge_state.latest_usage_summary,
         )
     else:
         emit_event(
@@ -183,6 +185,8 @@ def run_native_json_bridge(
             arguments=args,
             exit_code=return_code,
             session_id=bridge_state.session_id,
+            response_preview=bridge_state.latest_agent_message,
+            usage_summary=bridge_state.latest_usage_summary,
         )
 
     return return_code
@@ -197,6 +201,8 @@ def emit_event(
     arguments: Optional[List[str]] = None,
     exit_code: Optional[int] = None,
     session_id: Optional[str] = None,
+    response_preview: Optional[str] = None,
+    usage_summary: Optional[str] = None,
 ) -> None:
     event = {
         "state": state,
@@ -212,6 +218,10 @@ def emit_event(
         event["arguments"] = arguments
     if exit_code is not None:
         event["exitCode"] = exit_code
+    if response_preview is not None:
+        event["responsePreview"] = response_preview
+    if usage_summary is not None:
+        event["usageSummary"] = usage_summary
     payload = json.dumps(event, ensure_ascii=False, separators=(",", ":"))
     append_log_line(payload)
     send_socket_line(payload)

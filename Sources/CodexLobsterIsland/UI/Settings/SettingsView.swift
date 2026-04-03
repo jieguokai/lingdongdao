@@ -213,11 +213,15 @@ struct SettingsView: View {
                                         VStack(alignment: .leading, spacing: 2) {
                                             Text(session.commandName ?? session.title)
                                                 .font(.subheadline.weight(.medium))
-                                            Text(sessionSummaryLine(session))
+                                            Text(session.primarySummary)
                                                 .font(.caption)
                                                 .foregroundStyle(.secondary)
+                                                .lineLimit(2)
+                                            Text(session.metadataSummary)
+                                                .font(.caption2)
+                                                .foregroundStyle(.secondary)
                                                 .lineLimit(1)
-                                            Text(session.id)
+                                            Text(session.threadID)
                                                 .font(.caption2.monospaced())
                                                 .foregroundStyle(.secondary)
                                                 .textSelection(.enabled)
@@ -355,13 +359,6 @@ struct SettingsView: View {
             fillOpacity: 0.14,
             animationsEnabled: settingsStore.settings.animationsEnabled
         )
-    }
-
-    private func sessionSummaryLine(_ session: CodexProviderSessionSummary) -> String {
-        if let exitCode = session.exitCode, exitCode != 0, !session.detail.localizedCaseInsensitiveContains("exit \(exitCode)") {
-            return "\(session.detail) · exit \(exitCode)"
-        }
-        return session.detail
     }
 
     @ViewBuilder

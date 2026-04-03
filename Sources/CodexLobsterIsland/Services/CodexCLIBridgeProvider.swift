@@ -216,6 +216,8 @@ final class CodexCLIBridgeProvider: CodexStatusProviding, CodexProviderInspectab
                     detail: event.detail,
                     commandName: event.command,
                     exitCode: event.exitCode,
+                    responsePreview: event.responsePreview,
+                    usageSummary: event.usageSummary,
                     timestamp: event.timestamp
                 )
             )

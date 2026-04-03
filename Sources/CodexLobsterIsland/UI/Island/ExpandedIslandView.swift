@@ -145,12 +145,16 @@ struct ExpandedIslandView: View {
                                         .font(.caption.weight(.semibold))
                                         .foregroundStyle(.white.opacity(0.92))
                                         .lineLimit(1)
-                                    Text(session.id)
-                                        .font(.caption2.monospaced())
+                                    Text(session.primarySummary)
+                                        .font(.caption2)
+                                        .foregroundStyle(.white.opacity(0.82))
+                                        .lineLimit(2)
+                                    Text(session.metadataSummary)
+                                        .font(.caption2)
                                         .foregroundStyle(IslandStyle.tertiaryText)
                                         .lineLimit(1)
-                                    Text(sessionSummaryLine(session))
-                                        .font(.caption2)
+                                    Text(session.threadID)
+                                        .font(.caption2.monospaced())
                                         .foregroundStyle(IslandStyle.tertiaryText)
                                         .lineLimit(1)
                                 }
@@ -257,12 +261,5 @@ struct ExpandedIslandView: View {
         Rectangle().fill(IslandStyle.separator)
             .frame(height: 1)
             .opacity(0.9)
-    }
-
-    private func sessionSummaryLine(_ session: CodexProviderSessionSummary) -> String {
-        if let exitCode = session.exitCode, exitCode != 0, !session.detail.localizedCaseInsensitiveContains("exit \(exitCode)") {
-            return "\(session.detail) · exit \(exitCode)"
-        }
-        return session.detail
     }
 }

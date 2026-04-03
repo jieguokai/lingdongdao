@@ -9,6 +9,8 @@ package struct CodexLogEvent: Sendable {
     package let command: String?
     package let sessionID: String?
     package let exitCode: Int?
+    package let responsePreview: String?
+    package let usageSummary: String?
 }
 
 package struct CodexLogEventParser {
@@ -41,7 +43,9 @@ package struct CodexLogEventParser {
             source: payload.source,
             command: payload.command,
             sessionID: payload.sessionID,
-            exitCode: payload.exitCode
+            exitCode: payload.exitCode,
+            responsePreview: payload.responsePreview,
+            usageSummary: payload.usageSummary
         )
     }
 
@@ -73,7 +77,9 @@ package struct CodexLogEventParser {
             source: dictionary["source"],
             command: dictionary["command"],
             sessionID: dictionary["sessionId"] ?? dictionary["sessionID"],
-            exitCode: dictionary["exitCode"].flatMap(Int.init)
+            exitCode: dictionary["exitCode"].flatMap(Int.init),
+            responsePreview: dictionary["responsePreview"],
+            usageSummary: dictionary["usageSummary"]
         )
     }
 }
@@ -87,6 +93,8 @@ private struct JSONPayload: Decodable {
     let command: String?
     let sessionID: String?
     let exitCode: Int?
+    let responsePreview: String?
+    let usageSummary: String?
 
     private enum CodingKeys: String, CodingKey {
         case state
@@ -97,6 +105,8 @@ private struct JSONPayload: Decodable {
         case command
         case sessionID = "sessionId"
         case exitCode
+        case responsePreview
+        case usageSummary
     }
 }
 
