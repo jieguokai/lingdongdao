@@ -212,13 +212,18 @@ struct SettingsView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                                         StatusBadgeView(state: currentSession.state, compact: true)
-                                        Text(currentSession.commandName ?? currentSession.title)
+                                        Text(currentSession.displayCommand)
                                             .font(.subheadline.weight(.medium))
                                         Spacer(minLength: 8)
                                         Text(currentSession.timestamp.shortRelativeString)
                                             .font(.caption2)
                                             .foregroundStyle(.secondary)
                                     }
+
+                                    Text(currentSession.phaseLabel)
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.primary.opacity(0.84))
+                                        .lineLimit(1)
 
                                     Text(currentSession.primarySummary)
                                         .font(.caption)
@@ -255,8 +260,12 @@ struct SettingsView: View {
                                         StatusBadgeView(state: session.state, compact: true)
                                             .frame(minWidth: 58, alignment: .leading)
                                         VStack(alignment: .leading, spacing: 2) {
-                                            Text(session.commandName ?? session.title)
+                                            Text(session.displayCommand)
                                                 .font(.subheadline.weight(.medium))
+                                            Text(session.phaseLabel)
+                                                .font(.caption.weight(.semibold))
+                                                .foregroundStyle(.primary.opacity(0.84))
+                                                .lineLimit(1)
                                             Text(session.primarySummary)
                                                 .font(.caption)
                                                 .foregroundStyle(.secondary)

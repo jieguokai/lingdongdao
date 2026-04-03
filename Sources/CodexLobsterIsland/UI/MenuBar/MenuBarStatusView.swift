@@ -13,6 +13,7 @@ struct MenuBarStatusView: View {
         let headerSummary = statusService.providerStatusSummary == statusService.currentTask.title
             ? statusService.currentState.subtitle
             : statusService.providerStatusSummary
+        let currentSession = statusService.currentProviderSession
 
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 6) {
@@ -34,6 +35,18 @@ struct MenuBarStatusView: View {
                         .font(.caption2)
                         .foregroundStyle(.orange.opacity(0.9))
                         .lineLimit(1)
+                }
+
+                if let currentSession {
+                    Text("\(currentSession.displayCommand) · \(currentSession.phaseLabel)")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.primary.opacity(0.84))
+                        .lineLimit(1)
+
+                    Text(currentSession.primarySummary)
+                        .font(.caption2)
+                        .foregroundStyle(IslandStyle.tertiaryText)
+                        .lineLimit(2)
                 }
             }
             .padding(.bottom, 10)

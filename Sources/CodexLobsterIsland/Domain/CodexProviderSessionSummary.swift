@@ -15,6 +15,14 @@ struct CodexProviderSessionSummary: Identifiable, Equatable, Sendable {
 extension CodexProviderSessionSummary {
     var threadID: String { id }
 
+    var displayCommand: String {
+        commandName ?? "codex"
+    }
+
+    var phaseLabel: String {
+        title
+    }
+
     var primarySummary: String {
         responsePreview ?? detail
     }
