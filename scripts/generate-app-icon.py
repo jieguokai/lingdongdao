@@ -28,6 +28,11 @@ COLORS = {
     "eye": (18, 20, 23, 255),
 }
 
+MIN_X = min(x for x, _, _ in PIXELS)
+MAX_X = max(x for x, _, _ in PIXELS)
+MIN_Y = min(y for _, y, _ in PIXELS)
+MAX_Y = max(y for _, y, _ in PIXELS)
+
 
 def main() -> None:
     if len(sys.argv) != 2:
@@ -115,8 +120,8 @@ def add_depth_panel(base: Image.Image, size: int, inset: int) -> None:
 def add_soft_halo(base: Image.Image, size: int) -> None:
     halo = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(halo)
-    cx = size * 0.54
-    cy = size * 0.48
+    cx = size * 0.50
+    cy = size * 0.49
     rx = size * 0.28
     ry = size * 0.22
     draw.ellipse((cx - rx, cy - ry, cx + rx, cy + ry), fill=(43, 164, 196, 56))
@@ -145,7 +150,7 @@ def add_lobster_shadow(base: Image.Image, size: int) -> None:
     draw = ImageDraw.Draw(shadow)
     width = size * 0.28
     height = size * 0.06
-    cx = size * 0.53
+    cx = size * 0.50
     cy = size * 0.71
     draw.ellipse((cx - width / 2, cy - height / 2, cx + width / 2, cy + height / 2), fill=(6, 9, 14, 160))
     shadow = shadow.filter(ImageFilter.GaussianBlur(radius=size * 0.02))
@@ -154,9 +159,11 @@ def add_lobster_shadow(base: Image.Image, size: int) -> None:
 
 def add_lobster(base: Image.Image, size: int) -> None:
     draw = ImageDraw.Draw(base)
-    pixel = size / 15.5
-    anchor_x = size * 0.11
-    anchor_y = size * 0.12
+    pixel = size / 16.8
+    sprite_width = (MAX_X - MIN_X + 1) * pixel
+    sprite_height = (MAX_Y - MIN_Y + 1) * pixel
+    anchor_x = (size - sprite_width) / 2 - (MIN_X * pixel)
+    anchor_y = (size - sprite_height) / 2 - (MIN_Y * pixel) + (size * 0.01)
     pixel_size = pixel * 0.94
     corner = max(1, int(pixel * 0.16))
 
