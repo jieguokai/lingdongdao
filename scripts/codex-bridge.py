@@ -12,6 +12,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 
+@dataclass
+class NativeBridgeState:
+    session_id: str
+    latest_agent_message: Optional[str] = None
+    latest_usage_summary: Optional[str] = None
+
+
 def main() -> int:
     command = resolve_codex_command()
     if command is None:
@@ -98,7 +105,7 @@ def run_native_json_bridge(
     detail: str,
 ) -> int:
     invocation = build_native_json_command(command, args)
-    current_session_id = session_id
+    bridge_state = NativeBridgeState(session_id=session_id)
 
     try:
         process = subprocess.Popen(
@@ -138,35 +145,40 @@ def run_native_json_bridge(
             command_name=command_name,
             title_label=title_label,
             fallback_detail=detail,
-            current_session_id=current_session_id,
+            current_session_id=bridge_state.session_id,
             original_args=args,
         )
         if mapped.session_id is not None:
-            current_session_id = mapped.session_id
+            bridge_state.session_id = mapped.session_id
+        if mapped.agent_message is not None:
+            bridge_state.latest_agent_message = mapped.agent_message
+        if mapped.usage_summary is not None:
+            bridge_state.latest_usage_summary = mapped.usage_summary
         if mapped.bridge_event is not None:
             emit_event(**mapped.bridge_event)
 
     return_code = process.wait()
+    final_detail = compose_final_detail(detail, bridge_state)
 
     if return_code == 0:
         emit_event(
             state="success",
             title=f"Codex {title_label}已完成",
-            detail=detail,
+            detail=final_detail,
             command_name=command_name,
             arguments=args,
             exit_code=return_code,
-            session_id=current_session_id,
+            session_id=bridge_state.session_id,
         )
     else:
         emit_event(
             state="error",
             title=f"Codex {title_label}失败",
-            detail=f"{detail} (exit {return_code})",
+            detail=final_detail,
             command_name=command_name,
             arguments=args,
             exit_code=return_code,
-            session_id=current_session_id,
+            session_id=bridge_state.session_id,
         )
 
     return return_code
@@ -279,6 +291,8 @@ def parse_native_json_line(raw_line: str) -> Optional[Dict[str, Any]]:
 class MappedNativeEvent:
     bridge_event: Optional[Dict[str, Any]]
     session_id: Optional[str]
+    agent_message: Optional[str] = None
+    usage_summary: Optional[str] = None
 
 
 def map_native_event(
@@ -305,7 +319,7 @@ def map_native_event(
                 command_name=command_name,
                 arguments=original_args,
                 session_id=session_id,
-            ),
+                ),
             session_id=session_id,
         )
 
@@ -327,17 +341,36 @@ def map_native_event(
         if isinstance(item, dict) and item.get("type") == "agent_message":
             text = item.get("text")
             if isinstance(text, str) and text.strip():
+                message = summarize_detail(text)
                 return MappedNativeEvent(
                     bridge_event=dict(
                         state="running",
                         title="Codex 已生成回复",
-                        detail=text.strip(),
+                        detail=message,
                         command_name=command_name,
                         arguments=original_args,
                         session_id=session_id,
                     ),
                     session_id=session_id,
+                    agent_message=message,
                 )
+
+    if event_type == "turn.completed":
+        usage = native_event.get("usage")
+        usage_summary = summarize_usage(usage)
+        if usage_summary is not None:
+            return MappedNativeEvent(
+                bridge_event=dict(
+                    state="running",
+                    title="Codex 回合已完成",
+                    detail=usage_summary,
+                    command_name=command_name,
+                    arguments=original_args,
+                    session_id=session_id,
+                ),
+                session_id=session_id,
+                usage_summary=usage_summary,
+            )
 
     if event_type == "error":
         message = native_event.get("message")
@@ -356,6 +389,47 @@ def map_native_event(
             )
 
     return MappedNativeEvent(bridge_event=None, session_id=session_id)
+
+
+def compose_final_detail(fallback_detail: str, bridge_state: NativeBridgeState) -> str:
+    parts: List[str] = []
+    base = summarize_detail(fallback_detail)
+    if base:
+        parts.append(base)
+    if bridge_state.latest_agent_message and bridge_state.latest_agent_message not in parts:
+        parts.append(bridge_state.latest_agent_message)
+    if bridge_state.latest_usage_summary and bridge_state.latest_usage_summary not in parts:
+        parts.append(bridge_state.latest_usage_summary)
+    return " · ".join(parts) if parts else "Codex CLI 会话已结束"
+
+
+def summarize_detail(value: str, limit: int = 160) -> str:
+    normalized = " ".join(value.split())
+    if len(normalized) <= limit:
+        return normalized
+    return normalized[: limit - 3] + "..."
+
+
+def summarize_usage(usage: Any) -> Optional[str]:
+    if not isinstance(usage, dict):
+        return None
+
+    input_tokens = usage.get("input_tokens")
+    output_tokens = usage.get("output_tokens")
+    cached_input_tokens = usage.get("cached_input_tokens")
+
+    token_parts: List[str] = []
+    if isinstance(input_tokens, int):
+        token_parts.append(f"in {input_tokens}")
+    if isinstance(output_tokens, int):
+        token_parts.append(f"out {output_tokens}")
+    if isinstance(cached_input_tokens, int) and cached_input_tokens > 0:
+        token_parts.append(f"cached {cached_input_tokens}")
+
+    if not token_parts:
+        return None
+
+    return "tokens " + " · ".join(token_parts)
 
 
 def command_context(args: List[str]) -> Tuple[str, str, str]:

@@ -80,12 +80,13 @@ grep -q '"state":"success"' "$LOG_FILE"
 grep -q '"command":"exec"' "$LOG_FILE"
 grep -q '"source":"codex-cli-bridge"' "$LOG_FILE"
 grep -q '"sessionId":"native-thread-123"' "$LOG_FILE"
-grep -q '"detail":"Native bridge reply"' "$LOG_FILE"
+grep -q '"detail":"hello from codex bridge · Native bridge reply · tokens in 12 · out 7"' "$LOG_FILE"
 grep -q '"state":"running"' "$CAPTURE_FILE"
 grep -q '"state":"success"' "$CAPTURE_FILE"
 grep -q '"command":"exec"' "$CAPTURE_FILE"
 grep -q '"sessionId":"native-thread-123"' "$CAPTURE_FILE"
-grep -q '"detail":"Native bridge reply"' "$CAPTURE_FILE"
+grep -q '"title":"Codex 回合已完成"' "$CAPTURE_FILE"
+grep -q '"detail":"hello from codex bridge · Native bridge reply · tokens in 12 · out 7"' "$CAPTURE_FILE"
 
 CAPTURE_FILE_WRAPPER="$TMP_DIR/socket-lines-wrapper.txt"
 python3 - "$PORT" "$CAPTURE_FILE_WRAPPER" <<'PY' &
@@ -138,7 +139,7 @@ FAKE_CODEX_ARGS_FILE="$ARGS_FILE" \
 python3 "$ROOT/scripts/codex-bridge.py" resume "session-123" "follow up task" >/dev/null
 
 grep -q '"command":"resume"' "$LOG_FILE"
-grep -q '"detail":"恢复会话 session-123 · follow up task"' "$LOG_FILE"
+grep -q '"detail":"恢复会话 session-123 · follow up task · Native bridge reply · tokens in 12 · out 7"' "$LOG_FILE"
 
 CODEX_LOBSTER_CODEX_BIN="$FAKE_CODEX" \
 CODEX_LOBSTER_BRIDGE_LOG_PATH="$LOG_FILE" \
@@ -147,6 +148,7 @@ python3 "$ROOT/scripts/codex-bridge.py" review "target.swift" >/dev/null
 
 grep -q '"command":"review"' "$LOG_FILE"
 grep -q '"title":"Codex 审查已完成"' "$LOG_FILE"
+grep -q '"detail":"审查 target.swift · Native bridge reply · tokens in 12 · out 7"' "$LOG_FILE"
 grep -q '^exec review --json target.swift$' "$ARGS_FILE"
 
 echo "verify-codex-cli-bridge passed"

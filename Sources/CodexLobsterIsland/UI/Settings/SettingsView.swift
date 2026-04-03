@@ -358,7 +358,7 @@ struct SettingsView: View {
     }
 
     private func sessionSummaryLine(_ session: CodexProviderSessionSummary) -> String {
-        if let exitCode = session.exitCode, exitCode != 0 {
+        if let exitCode = session.exitCode, exitCode != 0, !session.detail.localizedCaseInsensitiveContains("exit \(exitCode)") {
             return "\(session.detail) · exit \(exitCode)"
         }
         return session.detail
