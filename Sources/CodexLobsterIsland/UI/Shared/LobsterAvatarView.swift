@@ -19,27 +19,58 @@ struct LobsterAvatarView: View {
                 ? CGFloat(sin(timelinePhase * 6.0)) * interaction.sway
                 : 0.0
 
-            GeometryReader { proxy in
-                let availableWidth = max(proxy.size.width - (contentPadding * 2), 1)
-                let availableHeight = max(proxy.size.height - (contentPadding * 2), 1)
-                let spriteWidth = CGFloat(bounds.width)
-                let spriteHeight = CGFloat(bounds.height)
-                let pixel = min(availableWidth / spriteWidth, availableHeight / spriteHeight)
-                let xInset = contentPadding + ((availableWidth - (spriteWidth * pixel)) / 2)
-                let yInset = contentPadding + ((availableHeight - (spriteHeight * pixel)) / 2)
+            ZStack {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(IslandStyle.avatarGlow(for: state))
+                    .scaleEffect(interactionPhase == .hovered ? 1.06 : 1.0)
+                    .blur(radius: interactionPhase == .pressed ? 11 : 15)
+                    .opacity(interactionPhase == .resting ? 0.42 : 0.62)
 
-                ForEach(pixels) { square in
-                    RoundedRectangle(cornerRadius: pixel * 0.16, style: .continuous)
-                        .fill(color(for: square))
-                        .frame(width: pixel * 0.92, height: pixel * 0.92)
-                        .position(
-                            x: xInset + (CGFloat(square.x - bounds.minX) + 0.5) * pixel,
-                            y: yInset + (CGFloat(square.y - bounds.minY) + 0.5) * pixel
-                        )
+                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                    .fill(IslandStyle.avatarPlateFill(for: state))
+                    .overlay(alignment: .topLeading) {
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                            .fill(IslandStyle.avatarPlateSheen)
+                            .opacity(0.9)
+                    }
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                            .strokeBorder(Color.white.opacity(0.10), lineWidth: 0.9)
+                    }
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .strokeBorder(IslandStyle.innerStroke, lineWidth: 0.6)
+                            .padding(1.4)
+                    }
+                    .shadow(color: Color.black.opacity(0.30), radius: 12, y: 8)
+
+                Capsule(style: .continuous)
+                    .fill(IslandStyle.accent(for: state).opacity(0.18))
+                    .frame(width: 46, height: 8)
+                    .offset(y: 17)
+
+                GeometryReader { proxy in
+                    let availableWidth = max(proxy.size.width - (contentPadding * 2), 1)
+                    let availableHeight = max(proxy.size.height - (contentPadding * 2), 1)
+                    let spriteWidth = CGFloat(bounds.width)
+                    let spriteHeight = CGFloat(bounds.height)
+                    let pixel = min(availableWidth / spriteWidth, availableHeight / spriteHeight)
+                    let xInset = contentPadding + ((availableWidth - (spriteWidth * pixel)) / 2)
+                    let yInset = contentPadding + ((availableHeight - (spriteHeight * pixel)) / 2)
+
+                    ForEach(pixels) { square in
+                        RoundedRectangle(cornerRadius: pixel * 0.18, style: .continuous)
+                            .fill(color(for: square))
+                            .frame(width: pixel * 0.92, height: pixel * 0.92)
+                            .position(
+                                x: xInset + (CGFloat(square.x - bounds.minX) + 0.5) * pixel,
+                                y: yInset + (CGFloat(square.y - bounds.minY) + 0.5) * pixel
+                            )
+                    }
                 }
             }
             .scaleEffect(interaction.scale)
-            .offset(x: swayOffset, y: interaction.yOffset)
+            .offset(x: swayOffset, y: interaction.yOffset - 0.5)
             .animation(.spring(response: 0.24, dampingFraction: 0.76), value: interactionPhase)
         }
     }

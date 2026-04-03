@@ -7,48 +7,78 @@ struct CompactIslandView: View {
     let onToggleExpanded: () -> Void
 
     var body: some View {
-        let titleOpacity = interactionPhase == .hovered ? 0.98 : 0.92
-        let titleOffset = interactionPhase == .pressed ? 0.6 : 0.0
-        let badgeOpacity = interactionPhase == .hovered ? 0.88 : 0.74
-        let chevronOpacity = interactionPhase == .hovered ? 0.56 : 0.38
+        let state = statusService.currentState
+        let headlineOpacity = interactionPhase == .hovered ? 0.98 : 0.94
+        let headlineOffset = interactionPhase == .pressed ? 0.35 : 0.0
+        let accessoryOpacity = interactionPhase == .hovered ? 0.92 : 0.76
+        let statusScale = interactionPhase == .hovered ? 1.08 : 1.0
 
         Button(action: onToggleExpanded) {
             HStack(spacing: 10) {
                 LobsterAvatarView(
-                    state: statusService.currentState,
+                    state: state,
                     animationsEnabled: settingsStore.settings.animationsEnabled,
                     interactionPhase: interactionPhase,
-                    contentPadding: 3
+                    contentPadding: 4
                 )
-                .frame(width: 34, height: 34)
+                .frame(width: 30, height: 30)
 
-                Text(statusService.currentState.dynamicIslandTitle)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white.opacity(titleOpacity))
-                    .tracking(-0.2)
-                    .lineLimit(1)
-                    .offset(y: titleOffset)
-                    .animation(.spring(response: 0.24, dampingFraction: 0.78), value: interactionPhase)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(state.dynamicIslandTitle)
+                        .font(.system(size: 13.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(IslandStyle.primaryText.opacity(headlineOpacity))
+                        .tracking(-0.15)
+                        .lineLimit(1)
+                        .offset(y: headlineOffset)
+                        .animation(.spring(response: 0.22, dampingFraction: 0.80), value: interactionPhase)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Spacer(minLength: 0)
+                HStack(spacing: 8) {
+                    if let accessoryLabel {
+                        Text(accessoryLabel)
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundStyle(IslandStyle.secondaryText.opacity(accessoryOpacity))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                Capsule(style: .continuous)
+                                    .fill(IslandStyle.microChipFill(for: state))
+                                    .overlay {
+                                        Capsule(style: .continuous)
+                                            .strokeBorder(IslandStyle.microChipStroke(for: state), lineWidth: 0.8)
+                                    }
+                            )
+                            .lineLimit(1)
+                    }
 
-                StatusBadgeView(
-                    state: statusService.currentState,
-                    compact: true,
-                    interactionPhase: interactionPhase,
-                    animationsEnabled: settingsStore.settings.animationsEnabled
-                )
-                    .opacity(badgeOpacity)
-                    .animation(.easeOut(duration: 0.16), value: interactionPhase)
+                    Circle()
+                        .fill(IslandStyle.statusDotFill(for: state))
+                        .frame(width: 8, height: 8)
+                        .scaleEffect(statusScale)
+                        .shadow(color: IslandStyle.accent(for: state).opacity(0.48), radius: 5)
 
-                Image(systemName: "chevron.down")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.white.opacity(chevronOpacity))
-                    .animation(.easeOut(duration: 0.16), value: interactionPhase)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(IslandStyle.quaternaryText.opacity(interactionPhase == .hovered ? 0.9 : 0.72))
+                }
             }
-            .frame(width: AppConstants.compactIslandSize.width - 10, height: AppConstants.compactIslandSize.height - 10)
+            .padding(.horizontal, 9)
+            .frame(width: AppConstants.compactIslandSize.width - 8, height: AppConstants.compactIslandSize.height - 8)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+    }
+
+    private var accessoryLabel: String? {
+        if let session = statusService.currentProviderSession {
+            return session.displayCommand
+        }
+
+        if let connectionLabel = statusService.providerConnectionLabel {
+            return connectionLabel
+        }
+
+        return nil
     }
 }

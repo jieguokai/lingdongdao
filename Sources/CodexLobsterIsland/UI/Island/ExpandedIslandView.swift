@@ -7,10 +7,9 @@ struct ExpandedIslandView: View {
     let onToggleExpanded: () -> Void
 
     var body: some View {
-        let accentColor = tintColor(for: statusService.currentState)
-        let titleOffset = interactionPhase == .pressed ? 0.8 : 0.0
-        let timestampOpacity = interactionPhase == .hovered ? 0.86 : 0.70
-        let historyEntries = Array(statusService.history)
+        let state = statusService.currentState
+        let accentColor = IslandStyle.accent(for: state)
+        let historyEntries = Array(statusService.history.prefix(5))
         let currentSessionID = statusService.currentProviderSession?.id
         let providerSessions = Array(
             statusService.recentProviderSessions
@@ -18,35 +17,129 @@ struct ExpandedIslandView: View {
                 .prefix(3)
         )
 
-        VStack(alignment: .leading, spacing: 0) {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                heroCard(accentColor: accentColor)
+
+                if let currentSession = statusService.currentProviderSession {
+                    sessionCard(
+                        title: "当前会话",
+                        subtitle: statusService.providerConnectionLabel ?? "真实 Codex 会话",
+                        session: currentSession,
+                        accentColor: accentColor,
+                        emphasize: true
+                    )
+                } else {
+                    providerCard(accentColor: accentColor)
+                }
+
+                if !providerSessions.isEmpty {
+                    groupedCard(title: "最近会话", subtitle: "最近 3 次桥接会话") {
+                        VStack(alignment: .leading, spacing: 10) {
+                            ForEach(providerSessions) { session in
+                                sessionRow(session: session, accentColor: accentColor)
+                            }
+                        }
+                    }
+                }
+
+                groupedCard(title: "最近状态", subtitle: "状态流转记录") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(historyEntries) { entry in
+                            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                                CompactStateMark(state: entry.state, size: 8)
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(entry.state.dynamicIslandTitle)
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(IslandStyle.primaryText)
+                                    Text(entry.taskTitle)
+                                        .font(.caption2)
+                                        .foregroundStyle(IslandStyle.secondaryText)
+                                        .lineLimit(1)
+                                }
+
+                                Spacer(minLength: 8)
+
+                                Text(entry.timestamp.shortRelativeString)
+                                    .font(.caption2)
+                                    .foregroundStyle(IslandStyle.tertiaryText)
+                            }
+                        }
+                    }
+                }
+
+                if statusService.canManuallyTransition {
+                    groupedCard(title: "调试状态", subtitle: "仅预览模式可见") {
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack(spacing: 8) {
+                                ForEach(CodexState.allCases, id: \.self) { manualState in
+                                    Button(manualState.displayName) {
+                                        statusService.setPreviewState(manualState)
+                                    }
+                                    .foregroundStyle(IslandStyle.primaryText)
+                                    .buttonStyle(
+                                        InteractiveButtonStyle(
+                                            prominence: .subtle,
+                                            accentColor: IslandStyle.accent(for: manualState),
+                                            cornerRadius: 12,
+                                            fillOpacity: 0.08,
+                                            animationsEnabled: settingsStore.settings.animationsEnabled
+                                        )
+                                    )
+                                }
+                            }
+
+                            Button("下一个状态") {
+                                statusService.advance()
+                            }
+                            .foregroundStyle(IslandStyle.primaryText)
+                            .buttonStyle(
+                                InteractiveButtonStyle(
+                                    prominence: .secondary,
+                                    accentColor: accentColor,
+                                    cornerRadius: 12,
+                                    fillOpacity: 0.12,
+                                    animationsEnabled: settingsStore.settings.animationsEnabled
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, 2)
+        }
+        .frame(width: AppConstants.expandedIslandSize.width - 36, height: AppConstants.expandedIslandSize.height - 36, alignment: .topLeading)
+    }
+
+    private func heroCard(accentColor: Color) -> some View {
+        let timestampOpacity = interactionPhase == .hovered ? 0.86 : 0.74
+
+        return groupedCard(title: "Codex Lobster Island", subtitle: statusService.currentState.subtitle, accentColor: accentColor, compactHeader: true) {
             HStack(alignment: .top, spacing: 14) {
                 LobsterAvatarView(
                     state: statusService.currentState,
                     animationsEnabled: settingsStore.settings.animationsEnabled,
-                    interactionPhase: interactionPhase
+                    interactionPhase: interactionPhase,
+                    contentPadding: 6
                 )
-                .frame(width: 64, height: 64)
+                .frame(width: 70, height: 70)
 
-                VStack(alignment: .leading, spacing: 7) {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .center, spacing: 8) {
-                        StatusBadgeView(
-                            state: statusService.currentState,
-                            compact: true,
-                            interactionPhase: interactionPhase,
-                            animationsEnabled: settingsStore.settings.animationsEnabled
-                        )
-                        Spacer()
-                        TimestampLabel(date: statusService.lastUpdatedAt)
-                            .foregroundStyle(.white.opacity(timestampOpacity))
-                            .animation(.easeOut(duration: 0.18), value: interactionPhase)
+                        StateLabelPill(state: statusService.currentState, text: statusService.currentState.dynamicIslandTitle)
+                        Spacer(minLength: 8)
+                        Text(statusService.lastUpdatedAt.shortRelativeString)
+                            .font(.caption2)
+                            .foregroundStyle(IslandStyle.tertiaryText.opacity(timestampOpacity))
                         Button {
                             onToggleExpanded()
                         } label: {
                             Image(systemName: "xmark")
-                                .font(.caption.bold())
-                                .frame(width: 18, height: 18)
+                                .font(.system(size: 10, weight: .bold))
+                                .frame(width: 20, height: 20)
                         }
-                        .foregroundStyle(.white.opacity(0.9))
+                        .foregroundStyle(IslandStyle.secondaryText)
                         .buttonStyle(
                             InteractiveButtonStyle(
                                 prominence: .subtle,
@@ -59,272 +152,321 @@ struct ExpandedIslandView: View {
                     }
 
                     Text(statusService.currentTask.title)
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.97))
-                        .offset(y: titleOffset)
-                        .animation(.spring(response: 0.24, dampingFraction: 0.78), value: interactionPhase)
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .foregroundStyle(IslandStyle.primaryText)
+                        .lineLimit(2)
 
                     Text(statusService.currentTask.detail)
-                        .font(.callout)
+                        .font(.subheadline)
                         .foregroundStyle(IslandStyle.secondaryText)
-                        .lineLimit(2)
-                        .offset(y: titleOffset * 0.5)
-                        .animation(.spring(response: 0.24, dampingFraction: 0.8), value: interactionPhase)
-                }
-            }
-            .padding(.bottom, 14)
+                        .lineLimit(3)
 
-            sectionDivider
-                .padding(.bottom, 12)
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text("状态来源")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(IslandStyle.tertiaryText)
-
-                HStack(alignment: .top, spacing: 10) {
-                    Image(systemName: "dot.radiowaves.left.and.right")
-                        .font(.caption)
-                        .foregroundStyle(IslandStyle.tertiaryText)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(statusService.providerStatusSummary)
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.white.opacity(0.92))
-                        Text(statusService.providerStatusDetail)
-                            .font(.caption)
-                            .foregroundStyle(IslandStyle.tertiaryText)
-                            .textSelection(.enabled)
-                    }
-                }
-
-                if let connectionLabel = statusService.providerConnectionLabel {
-                    HStack(alignment: .top, spacing: 8) {
-                        Circle()
-                            .fill(statusService.isProviderConnected ? Color.green : IslandStyle.tertiaryText.opacity(0.8))
-                            .frame(width: 7, height: 7)
-                            .padding(.top, 5)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(connectionLabel)
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(statusService.isProviderConnected ? Color.green.opacity(0.92) : .white.opacity(0.86))
-                            if let connectionDetail = statusService.providerConnectionDetail {
-                                Text(connectionDetail)
-                                    .font(.caption2)
-                                    .foregroundStyle(IslandStyle.tertiaryText)
-                            }
+                    HStack(spacing: 8) {
+                        MetaChip(icon: "dot.radiowaves.left.and.right", text: statusService.providerStatusSummary, accentColor: accentColor)
+                        if let connectionLabel = statusService.providerConnectionLabel {
+                            MetaChip(icon: "link", text: connectionLabel, accentColor: accentColor)
                         }
                     }
-                }
-
-                if let providerError = statusService.lastProviderError {
-                    HStack(alignment: .top, spacing: 8) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.caption)
-                            .foregroundStyle(.orange)
-                        Text(providerError)
-                            .font(.caption)
-                            .foregroundStyle(.orange.opacity(0.90))
-                            .textSelection(.enabled)
-                    }
-                }
-            }
-            .padding(.horizontal, 8)
-            .padding(.bottom, 12)
-
-            if let currentSession = statusService.currentProviderSession {
-                sectionDivider
-                    .padding(.bottom, 12)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("当前会话")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(IslandStyle.tertiaryText)
-
-                    HStack(alignment: .firstTextBaseline, spacing: 10) {
-                        StatusBadgeView(state: currentSession.state, compact: true)
-                            .frame(minWidth: 60, alignment: .leading)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(currentSession.displayCommand)
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.white.opacity(0.92))
-                                .lineLimit(1)
-                            Text(currentSession.phaseLabel)
-                                .font(.caption2.weight(.semibold))
-                                .foregroundStyle(.white.opacity(0.86))
-                                .lineLimit(1)
-                            Text(currentSession.primarySummary)
-                                .font(.caption2)
-                                .foregroundStyle(.white.opacity(0.82))
-                                .lineLimit(3)
-                            Text(currentSession.metadataSummary)
-                                .font(.caption2)
-                                .foregroundStyle(IslandStyle.tertiaryText)
-                                .lineLimit(1)
-                            if let errorSummary = currentSession.errorSummary {
-                                Text(errorSummary)
-                                    .font(.caption2)
-                                    .foregroundStyle(.orange.opacity(0.9))
-                                    .lineLimit(2)
-                            }
-                            Text(currentSession.threadID)
-                                .font(.caption2.monospaced())
-                                .foregroundStyle(IslandStyle.tertiaryText)
-                                .lineLimit(1)
-                        }
-                        Spacer(minLength: 8)
-                        Text(currentSession.timestamp.shortRelativeString)
-                            .font(.caption2)
-                            .foregroundStyle(IslandStyle.tertiaryText)
-                    }
-                }
-                .padding(.horizontal, 8)
-                .padding(.bottom, 12)
-            }
-
-            if !providerSessions.isEmpty {
-                sectionDivider
-                    .padding(.bottom, 12)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("最近会话")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(IslandStyle.tertiaryText)
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        ForEach(Array(providerSessions.enumerated()), id: \.element.id) { index, session in
-                            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                                StatusBadgeView(state: session.state, compact: true)
-                                    .frame(minWidth: 60, alignment: .leading)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(session.displayCommand)
-                                        .font(.caption.weight(.semibold))
-                                        .foregroundStyle(.white.opacity(0.92))
-                                        .lineLimit(1)
-                                    Text(session.phaseLabel)
-                                        .font(.caption2.weight(.semibold))
-                                        .foregroundStyle(.white.opacity(0.86))
-                                        .lineLimit(1)
-                                    Text(session.primarySummary)
-                                        .font(.caption2)
-                                        .foregroundStyle(.white.opacity(0.82))
-                                        .lineLimit(2)
-                                    Text(session.metadataSummary)
-                                        .font(.caption2)
-                                        .foregroundStyle(IslandStyle.tertiaryText)
-                                        .lineLimit(1)
-                                    if let errorSummary = session.errorSummary {
-                                        Text(errorSummary)
-                                            .font(.caption2)
-                                            .foregroundStyle(.orange.opacity(0.9))
-                                            .lineLimit(1)
-                                    }
-                                    Text(session.threadID)
-                                        .font(.caption2.monospaced())
-                                        .foregroundStyle(IslandStyle.tertiaryText)
-                                        .lineLimit(1)
-                                }
-                                Spacer(minLength: 8)
-                                Text(session.timestamp.shortRelativeString)
-                                    .font(.caption2)
-                                    .foregroundStyle(IslandStyle.tertiaryText)
-                            }
-
-                            if index < providerSessions.count - 1 {
-                                sectionDivider
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 8)
-                .padding(.bottom, 12)
-            }
-
-            sectionDivider
-                .padding(.bottom, 12)
-
-            VStack(alignment: .leading, spacing: 8) {
-                Text("最近状态")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(IslandStyle.tertiaryText)
-
-                ScrollView(.vertical, showsIndicators: true) {
-                    LazyVStack(alignment: .leading, spacing: 8) {
-                        ForEach(Array(historyEntries.enumerated()), id: \.element.id) { index, entry in
-                            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                                StatusBadgeView(state: entry.state, compact: true)
-                                    .frame(minWidth: 60, alignment: .leading)
-                                Text(entry.taskTitle)
-                                    .font(.caption)
-                                    .foregroundStyle(.white.opacity(0.90))
-                                    .lineLimit(1)
-                                Spacer(minLength: 8)
-                                Text(entry.timestamp.shortRelativeString)
-                                    .font(.caption2)
-                                    .foregroundStyle(IslandStyle.tertiaryText)
-                            }
-
-                            if index < historyEntries.count - 1 {
-                                sectionDivider
-                            }
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .frame(maxHeight: statusService.canManuallyTransition ? 108 : 144)
-            }
-            .padding(.horizontal, 8)
-            .padding(.bottom, 4)
-            .padding(.bottom, statusService.canManuallyTransition ? 8 : 0)
-
-            if statusService.canManuallyTransition {
-                sectionDivider
-                    .padding(.bottom, 10)
-
-                HStack(spacing: 8) {
-                    ForEach(CodexState.allCases, id: \.self) { state in
-                        Button(state.displayName) {
-                            statusService.setPreviewState(state)
-                        }
-                        .foregroundStyle(.white.opacity(0.86))
-                        .buttonStyle(
-                            InteractiveButtonStyle(
-                                prominence: .subtle,
-                                accentColor: tintColor(for: state),
-                                cornerRadius: 12,
-                                fillOpacity: 0.08,
-                                animationsEnabled: settingsStore.settings.animationsEnabled
-                            )
-                        )
-                    }
-
-                    Spacer()
-
-                    Button("下一个") {
-                        statusService.advance()
-                    }
-                    .foregroundStyle(.white.opacity(0.92))
-                    .buttonStyle(
-                        InteractiveButtonStyle(
-                            prominence: .secondary,
-                            accentColor: accentColor,
-                            cornerRadius: 12,
-                            fillOpacity: 0.10,
-                            animationsEnabled: settingsStore.settings.animationsEnabled
-                        )
-                    )
                 }
             }
         }
-        .frame(width: AppConstants.expandedIslandSize.width - 36, height: AppConstants.expandedIslandSize.height - 36, alignment: .topLeading)
     }
 
-    private func tintColor(for state: CodexState) -> Color {
-        IslandStyle.accent(for: state)
+    private func providerCard(accentColor: Color) -> some View {
+        groupedCard(title: "状态来源", subtitle: statusService.providerStatusSummary) {
+            VStack(alignment: .leading, spacing: 10) {
+                providerLine(icon: "dot.radiowaves.left.and.right", title: statusService.providerStatusSummary, detail: statusService.providerStatusDetail)
+
+                if let connectionLabel = statusService.providerConnectionLabel {
+                    providerLine(icon: "link", title: connectionLabel, detail: statusService.providerConnectionDetail)
+                }
+
+                if let providerError = statusService.lastProviderError {
+                    warningLine(providerError)
+                }
+
+                Button("复制最近会话诊断") {
+                    copyToPasteboard(statusService.providerDiagnosticsText)
+                }
+                .foregroundStyle(IslandStyle.primaryText)
+                .buttonStyle(
+                    InteractiveButtonStyle(
+                        prominence: .secondary,
+                        accentColor: accentColor,
+                        cornerRadius: 12,
+                        fillOpacity: 0.10,
+                        animationsEnabled: settingsStore.settings.animationsEnabled
+                    )
+                )
+            }
+        }
     }
 
-    private var sectionDivider: some View {
-        Rectangle().fill(IslandStyle.separator)
-            .frame(height: 1)
-            .opacity(0.9)
+    private func sessionCard(
+        title: String,
+        subtitle: String,
+        session: CodexProviderSessionSummary,
+        accentColor: Color,
+        emphasize: Bool
+    ) -> some View {
+        groupedCard(title: title, subtitle: subtitle, accentColor: emphasize ? accentColor : nil) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                    StateLabelPill(state: session.state, text: session.phaseLabel)
+                    Text(session.displayCommand)
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .foregroundStyle(IslandStyle.primaryText)
+                        .lineLimit(1)
+                    Spacer(minLength: 8)
+                    Text(session.timestamp.shortRelativeString)
+                        .font(.caption2)
+                        .foregroundStyle(IslandStyle.tertiaryText)
+                }
+
+                Text(session.primarySummary)
+                    .font(.subheadline)
+                    .foregroundStyle(IslandStyle.secondaryText)
+                    .lineLimit(4)
+
+                sessionDetailGrid(session: session)
+
+                if let errorSummary = session.errorSummary {
+                    warningLine(errorSummary)
+                }
+
+                Button("复制最近会话诊断") {
+                    copyToPasteboard(session.diagnosticLine)
+                }
+                .foregroundStyle(IslandStyle.primaryText)
+                .buttonStyle(
+                    InteractiveButtonStyle(
+                        prominence: .subtle,
+                        accentColor: accentColor,
+                        cornerRadius: 12,
+                        fillOpacity: 0.08,
+                        animationsEnabled: settingsStore.settings.animationsEnabled
+                    )
+                )
+            }
+        }
+    }
+
+    private func sessionRow(session: CodexProviderSessionSummary, accentColor: Color) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                StateLabelPill(state: session.state, text: session.phaseLabel)
+                Text(session.displayCommand)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(IslandStyle.primaryText)
+                    .lineLimit(1)
+                Spacer(minLength: 8)
+                Text(session.timestamp.shortRelativeString)
+                    .font(.caption2)
+                    .foregroundStyle(IslandStyle.tertiaryText)
+            }
+
+            Text(session.primarySummary)
+                .font(.caption)
+                .foregroundStyle(IslandStyle.secondaryText)
+                .lineLimit(2)
+
+            sessionDetailGrid(session: session, compact: true)
+
+            if let errorSummary = session.errorSummary {
+                warningLine(errorSummary)
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(IslandStyle.cardFill)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(IslandStyle.cardAccentWash(for: session.state).opacity(0.45))
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(IslandStyle.cardStroke, lineWidth: 0.8)
+                }
+        )
+    }
+
+    private func sessionDetailGrid(session: CodexProviderSessionSummary, compact: Bool = false) -> some View {
+        let font = compact ? Font.caption2 : Font.caption
+        let secondaryFont = compact ? Font.caption2 : Font.caption2
+
+        return VStack(alignment: .leading, spacing: compact ? 4 : 6) {
+            detailLine(label: "线程", value: session.threadID, font: font, valueFont: .caption2.monospaced(), compact: compact)
+
+            if let usageSummary = session.usageSummary {
+                detailLine(label: "Usage", value: usageSummary, font: font, valueFont: secondaryFont, compact: compact)
+            }
+
+            if let exitCode = session.exitCode {
+                detailLine(label: "退出", value: "exit \(exitCode)", font: font, valueFont: secondaryFont, compact: compact)
+            }
+        }
+    }
+
+    private func detailLine(label: String, value: String, font: Font, valueFont: Font, compact: Bool) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(label)
+                .font(font.weight(.semibold))
+                .foregroundStyle(IslandStyle.quaternaryText)
+                .frame(width: compact ? 28 : 32, alignment: .leading)
+            Text(value)
+                .font(valueFont)
+                .foregroundStyle(IslandStyle.tertiaryText)
+                .lineLimit(1)
+        }
+    }
+
+    private func providerLine(icon: String, title: String, detail: String?) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(IslandStyle.tertiaryText)
+                .frame(width: 12, alignment: .center)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(IslandStyle.primaryText)
+                if let detail {
+                    Text(detail)
+                        .font(.caption2)
+                        .foregroundStyle(IslandStyle.secondaryText)
+                        .textSelection(.enabled)
+                }
+            }
+        }
+    }
+
+    private func warningLine(_ text: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.caption)
+                .foregroundStyle(.orange)
+            Text(text)
+                .font(.caption2)
+                .foregroundStyle(.orange.opacity(0.92))
+                .lineLimit(3)
+                .textSelection(.enabled)
+        }
+    }
+
+    private func groupedCard<Content: View>(
+        title: String,
+        subtitle: String,
+        accentColor: Color? = nil,
+        compactHeader: Bool = false,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: compactHeader ? 12 : 10) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title.uppercased())
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .foregroundStyle(IslandStyle.quaternaryText)
+                    .tracking(0.8)
+                Text(subtitle)
+                    .font(compactHeader ? .caption.weight(.semibold) : .caption)
+                    .foregroundStyle(IslandStyle.secondaryText)
+                    .lineLimit(compactHeader ? 1 : 2)
+            }
+
+            content()
+        }
+        .padding(compactHeader ? 14 : 12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: compactHeader ? 24 : 20, style: .continuous)
+                .fill(IslandStyle.cardFill)
+                .overlay {
+                    RoundedRectangle(cornerRadius: compactHeader ? 24 : 20, style: .continuous)
+                        .fill(IslandStyle.cardAccentWash(for: statusService.currentState).opacity(accentColor == nil ? 0.18 : 0.34))
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: compactHeader ? 24 : 20, style: .continuous)
+                        .strokeBorder(IslandStyle.cardStroke, lineWidth: 0.9)
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: compactHeader ? 24 : 20, style: .continuous)
+                        .strokeBorder(IslandStyle.cardInnerStroke, lineWidth: 0.6)
+                        .padding(1.4)
+                }
+        )
+    }
+
+    private func copyToPasteboard(_ text: String) {
+        #if canImport(AppKit)
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(text, forType: .string)
+        #endif
+    }
+}
+
+private struct CompactStateMark: View {
+    let state: CodexState
+    let size: CGFloat
+
+    var body: some View {
+        Circle()
+            .fill(IslandStyle.statusDotFill(for: state))
+            .frame(width: size, height: size)
+            .shadow(color: IslandStyle.accent(for: state).opacity(0.45), radius: 4)
+    }
+}
+
+private struct StateLabelPill: View {
+    let state: CodexState
+    let text: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            CompactStateMark(state: state, size: 8)
+            Text(text)
+                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                .lineLimit(1)
+        }
+        .foregroundStyle(IslandStyle.primaryText)
+        .padding(.horizontal, 9)
+        .padding(.vertical, 5)
+        .background(
+            Capsule(style: .continuous)
+                .fill(IslandStyle.microChipFill(for: state))
+                .overlay {
+                    Capsule(style: .continuous)
+                        .strokeBorder(IslandStyle.microChipStroke(for: state), lineWidth: 0.8)
+                }
+        )
+    }
+}
+
+private struct MetaChip: View {
+    let icon: String
+    let text: String
+    let accentColor: Color
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.caption2)
+            Text(text)
+                .font(.caption2.weight(.medium))
+                .lineLimit(1)
+        }
+        .foregroundStyle(IslandStyle.secondaryText)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 5)
+        .background(
+            Capsule(style: .continuous)
+                .fill(accentColor.opacity(0.10))
+                .overlay {
+                    Capsule(style: .continuous)
+                        .strokeBorder(accentColor.opacity(0.18), lineWidth: 0.75)
+                }
+        )
     }
 }

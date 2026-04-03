@@ -11,7 +11,7 @@ struct FloatingIslandRootView: View {
 
     var body: some View {
         let state = statusService.currentState
-        let cornerRadius = isExpanded ? 28.0 : 21.0
+        let cornerRadius = isExpanded ? 30.0 : 19.0
         let islandShape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
         let interactionPhase: InteractivePhase = {
             if !isExpanded && isPressed {
@@ -19,17 +19,17 @@ struct FloatingIslandRootView: View {
             }
             return isHovered ? .hovered : .resting
         }()
-        let scale: CGFloat = isExpanded ? 1.0 : (interactionPhase == .pressed ? 0.992 : (interactionPhase == .hovered ? 1.003 : 1.0))
-        let yOffset: CGFloat = isExpanded ? 0.0 : (interactionPhase == .pressed ? 0.8 : (interactionPhase == .hovered ? -0.6 : 0.0))
+        let scale: CGFloat = isExpanded ? 1.0 : (interactionPhase == .pressed ? 0.994 : (interactionPhase == .hovered ? 1.002 : 1.0))
+        let yOffset: CGFloat = isExpanded ? 0.0 : (interactionPhase == .pressed ? 0.65 : (interactionPhase == .hovered ? -0.45 : 0.0))
         let auraOpacity: Double = {
             switch interactionPhase {
             case .resting: 0.14
-            case .hovered: 0.28
-            case .pressed: 0.34
+            case .hovered: 0.23
+            case .pressed: 0.27
             }
         }()
-        let auraScale: CGFloat = interactionPhase == .pressed ? 1.18 : (interactionPhase == .hovered ? 1.28 : 1.08)
-        let auraYOffset: CGFloat = interactionPhase == .pressed ? 3.0 : (interactionPhase == .hovered ? -3.0 : 0.0)
+        let auraScale: CGFloat = interactionPhase == .pressed ? 1.08 : (interactionPhase == .hovered ? 1.16 : 1.02)
+        let auraYOffset: CGFloat = interactionPhase == .pressed ? 2.5 : (interactionPhase == .hovered ? -2.0 : 0.0)
 
         Group {
             if isExpanded {
@@ -48,26 +48,41 @@ struct FloatingIslandRootView: View {
                 )
             }
         }
-        .padding(isExpanded ? 18 : 5)
+        .padding(isExpanded ? 18 : 4)
         .background {
             islandShape
-                .fill(IslandStyle.accent(for: state).opacity(auraOpacity))
+                .fill(IslandStyle.glow(for: state).opacity(auraOpacity))
                 .scaleEffect(auraScale)
                 .offset(y: auraYOffset)
-                .blur(radius: interactionPhase == .pressed ? 18 : 24)
+                .blur(radius: interactionPhase == .pressed ? 14 : 22)
         }
         .background(
             islandShape
-                .fill(.ultraThinMaterial)
+                .fill(IslandStyle.shellGradient(for: state))
                 .overlay {
                     islandShape
-                        .fill(IslandStyle.tintOverlay(for: state))
+                        .fill(IslandStyle.materialWash(for: state))
+                }
+                .overlay(alignment: .top) {
+                    islandShape
+                        .fill(IslandStyle.topSheen)
+                        .mask {
+                            Rectangle()
+                                .frame(height: isExpanded ? 120 : 42)
+                                .offset(y: isExpanded ? -8 : -2)
+                        }
                 }
                 .overlay {
                     islandShape
                         .strokeBorder(IslandStyle.edgeHighlight, lineWidth: 0.85)
                 }
+                .overlay {
+                    islandShape
+                        .strokeBorder(IslandStyle.innerStroke, lineWidth: 0.7)
+                        .padding(1.3)
+                }
         )
+        .shadow(color: Color.black.opacity(isExpanded ? 0.34 : 0.28), radius: isExpanded ? 22 : 14, y: isExpanded ? 14 : 9)
         .clipShape(islandShape)
         .compositingGroup()
         .contentShape(islandShape)

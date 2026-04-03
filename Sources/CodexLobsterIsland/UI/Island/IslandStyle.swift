@@ -2,16 +2,28 @@ import SwiftUI
 
 enum IslandStyle {
     static func background(for state: CodexState) -> AnyShapeStyle {
-        _ = state
-        return AnyShapeStyle(.ultraThinMaterial)
+        AnyShapeStyle(shellGradient(for: state))
     }
 
-    static func tintOverlay(for state: CodexState) -> LinearGradient {
+    static func shellGradient(for state: CodexState) -> LinearGradient {
         LinearGradient(
             colors: [
-                Color(.sRGB, red: 0.07, green: 0.08, blue: 0.11, opacity: 0.46),
-                accent(for: state).opacity(0.05),
-                Color(.sRGB, red: 0.04, green: 0.05, blue: 0.07, opacity: 0.34)
+                Color(.sRGB, red: 0.105, green: 0.125, blue: 0.158, opacity: 0.98),
+                Color(.sRGB, red: 0.085, green: 0.098, blue: 0.128, opacity: 0.99),
+                accent(for: state).opacity(0.06),
+                Color(.sRGB, red: 0.055, green: 0.065, blue: 0.089, opacity: 1)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    static func materialWash(for state: CodexState) -> LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.white.opacity(0.035),
+                accent(for: state).opacity(0.035),
+                Color.black.opacity(0.08)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -21,45 +33,154 @@ enum IslandStyle {
     static var edgeHighlight: LinearGradient {
         LinearGradient(
             colors: [
-                Color.white.opacity(0.20),
-                Color.white.opacity(0.09),
-                Color.white.opacity(0.04)
+                Color.white.opacity(0.22),
+                Color.white.opacity(0.08),
+                Color.white.opacity(0.03)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
     }
 
+    static var innerStroke: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.white.opacity(0.05),
+                Color.black.opacity(0.18)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    static var topSheen: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.white.opacity(0.16),
+                Color.white.opacity(0.05),
+                .clear
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
     static func glow(for state: CodexState) -> Color {
-        accent(for: state).opacity(0.16)
+        accent(for: state).opacity(0.18)
     }
 
     static func accent(for state: CodexState) -> Color {
         switch state {
         case .idle:
-            Color(.sRGB, red: 0.37, green: 0.56, blue: 0.96, opacity: 1)
+            Color(.sRGB, red: 0.46, green: 0.61, blue: 0.97, opacity: 1)
         case .running:
-            Color(.sRGB, red: 0.14, green: 0.72, blue: 0.95, opacity: 1)
+            Color(.sRGB, red: 0.13, green: 0.73, blue: 0.91, opacity: 1)
         case .success:
-            Color(.sRGB, red: 0.22, green: 0.79, blue: 0.52, opacity: 1)
+            Color(.sRGB, red: 0.24, green: 0.79, blue: 0.55, opacity: 1)
         case .error:
-            Color(.sRGB, red: 1.0, green: 0.42, blue: 0.38, opacity: 1)
+            Color(.sRGB, red: 0.95, green: 0.43, blue: 0.36, opacity: 1)
         }
     }
 
     static var panelFill: Color {
-        Color.white.opacity(0.06)
+        Color.white.opacity(0.05)
+    }
+
+    static var cardFill: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.white.opacity(0.085),
+                Color.white.opacity(0.045)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    static func cardAccentWash(for state: CodexState) -> LinearGradient {
+        LinearGradient(
+            colors: [
+                accent(for: state).opacity(0.16),
+                accent(for: state).opacity(0.03),
+                .clear
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    static var cardStroke: Color {
+        Color.white.opacity(0.08)
+    }
+
+    static var cardInnerStroke: Color {
+        Color.white.opacity(0.04)
+    }
+
+    static func avatarPlateFill(for state: CodexState) -> LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(.sRGB, red: 0.16, green: 0.19, blue: 0.24, opacity: 1),
+                Color(.sRGB, red: 0.09, green: 0.11, blue: 0.14, opacity: 1),
+                accent(for: state).opacity(0.14)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    static var avatarPlateSheen: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.white.opacity(0.18),
+                Color.white.opacity(0.02),
+                .clear
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    static func avatarGlow(for state: CodexState) -> Color {
+        accent(for: state).opacity(0.22)
+    }
+
+    static func statusDotFill(for state: CodexState) -> LinearGradient {
+        LinearGradient(
+            colors: [
+                accent(for: state).opacity(0.98),
+                accent(for: state).opacity(0.70)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    static func microChipFill(for state: CodexState) -> Color {
+        accent(for: state).opacity(0.12)
+    }
+
+    static func microChipStroke(for state: CodexState) -> Color {
+        accent(for: state).opacity(0.22)
     }
 
     static var separator: Color {
-        Color.white.opacity(0.10)
+        Color.white.opacity(0.08)
+    }
+
+    static var primaryText: Color {
+        Color.white.opacity(0.96)
     }
 
     static var secondaryText: Color {
-        Color.white.opacity(0.76)
+        Color.white.opacity(0.78)
     }
 
     static var tertiaryText: Color {
-        Color.white.opacity(0.58)
+        Color.white.opacity(0.56)
+    }
+
+    static var quaternaryText: Color {
+        Color.white.opacity(0.42)
     }
 }
