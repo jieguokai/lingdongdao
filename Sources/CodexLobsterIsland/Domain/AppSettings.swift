@@ -5,5 +5,5 @@ struct AppSettings: Equatable, Sendable {
     var showsIsland: Bool = true
     var animationsEnabled: Bool = true
     var launchAtLoginEnabled: Bool = false
-    var providerKind: CodexProviderKind = .mock
+    var providerKind: CodexProviderKind = .codexCLI
 }

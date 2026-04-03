@@ -29,7 +29,7 @@ enum CodexProviderKind: String, CaseIterable, Codable, Sendable, Identifiable {
         case .mock:
             "内置演示流程"
         case .codexCLI:
-            "通过真实 Codex CLI 生命周期桥接状态"
+            "只通过桥接启动的真实 Codex CLI 同步状态"
         case .processWatcher:
             "观察本地 Codex 进程状态"
         case .logParser:

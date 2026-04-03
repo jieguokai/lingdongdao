@@ -20,34 +20,11 @@ struct LobsterAvatarView: View {
                 : 0.0
 
             ZStack {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                Circle()
                     .fill(IslandStyle.avatarGlow(for: state))
-                    .scaleEffect(interactionPhase == .hovered ? 1.06 : 1.0)
-                    .blur(radius: interactionPhase == .pressed ? 11 : 15)
-                    .opacity(interactionPhase == .resting ? 0.42 : 0.62)
-
-                RoundedRectangle(cornerRadius: 15, style: .continuous)
-                    .fill(IslandStyle.avatarPlateFill(for: state))
-                    .overlay(alignment: .topLeading) {
-                        RoundedRectangle(cornerRadius: 15, style: .continuous)
-                            .fill(IslandStyle.avatarPlateSheen)
-                            .opacity(0.9)
-                    }
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 15, style: .continuous)
-                            .strokeBorder(Color.white.opacity(0.10), lineWidth: 0.9)
-                    }
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .strokeBorder(IslandStyle.innerStroke, lineWidth: 0.6)
-                            .padding(1.4)
-                    }
-                    .shadow(color: Color.black.opacity(0.30), radius: 12, y: 8)
-
-                Capsule(style: .continuous)
-                    .fill(IslandStyle.accent(for: state).opacity(0.18))
-                    .frame(width: 46, height: 8)
-                    .offset(y: 17)
+                    .scaleEffect(interactionPhase == .hovered ? 1.02 : 0.96)
+                    .blur(radius: interactionPhase == .pressed ? 7 : 10)
+                    .opacity(interactionPhase == .resting ? 0.20 : 0.32)
 
                 GeometryReader { proxy in
                     let availableWidth = max(proxy.size.width - (contentPadding * 2), 1)
@@ -70,7 +47,7 @@ struct LobsterAvatarView: View {
                 }
             }
             .scaleEffect(interaction.scale)
-            .offset(x: swayOffset, y: interaction.yOffset - 0.5)
+            .offset(x: swayOffset, y: interaction.yOffset - 0.2)
             .animation(.spring(response: 0.24, dampingFraction: 0.76), value: interactionPhase)
         }
     }

@@ -20,6 +20,8 @@ Project docs:
 ./scripts/run-app.sh
 ```
 
+默认状态来源现在是 `codexCLI`。如果你希望浮窗跟着真实 Codex 状态变化，必须通过 bridge 启动 Codex，而不是直接调用 `codex`。
+
 ## Send test events
 
 ```bash
@@ -71,6 +73,7 @@ Common troubleshooting:
 
 - If the app shows `Codex CLI 不可用`, set `CODEX_LOBSTER_CODEX_BIN` to the real `codex` binary path.
 - If the app shows `等待 Codex CLI 桥接`, the island is running but no bridge event has arrived yet. Run `./scripts/codex-island.sh ...`.
+- If you run `codex` directly in another terminal, the island will not treat that as real-time truth. Bridge mode is the only supported real-status path.
 - If a session failed, open Settings and use `复制最近会话诊断` to capture the latest session summaries.
 
 Integration boundary:
