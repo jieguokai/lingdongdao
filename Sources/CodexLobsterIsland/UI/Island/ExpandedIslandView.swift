@@ -18,94 +18,100 @@ struct ExpandedIslandView: View {
         )
 
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 12) {
-                heroCard(accentColor: accentColor)
+            HStack(alignment: .top, spacing: 14) {
+                VStack(alignment: .leading, spacing: 12) {
+                    heroCard(accentColor: accentColor)
 
-                if let currentSession = statusService.currentProviderSession {
-                    sessionCard(
-                        title: "当前会话",
-                        subtitle: statusService.providerConnectionLabel ?? "真实 Codex 会话",
-                        session: currentSession,
-                        accentColor: accentColor,
-                        emphasize: true
-                    )
-                } else {
-                    providerCard(accentColor: accentColor)
-                }
-
-                if !providerSessions.isEmpty {
-                    groupedCard(title: "最近会话", subtitle: "最近 3 次桥接会话") {
-                        VStack(alignment: .leading, spacing: 10) {
-                            ForEach(providerSessions) { session in
-                                sessionRow(session: session, accentColor: accentColor)
-                            }
-                        }
+                    if let currentSession = statusService.currentProviderSession {
+                        sessionCard(
+                            title: "当前会话",
+                            subtitle: statusService.providerConnectionLabel ?? "真实 Codex 会话",
+                            session: currentSession,
+                            accentColor: accentColor,
+                            emphasize: true
+                        )
+                    } else {
+                        providerCard(accentColor: accentColor)
                     }
                 }
+                .frame(width: 292, alignment: .topLeading)
 
-                groupedCard(title: "最近状态", subtitle: "状态流转记录") {
-                    VStack(alignment: .leading, spacing: 8) {
-                        ForEach(historyEntries) { entry in
-                            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                                CompactStateMark(state: entry.state, size: 8)
-
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(entry.state.dynamicIslandTitle)
-                                        .font(.caption.weight(.semibold))
-                                        .foregroundStyle(IslandStyle.primaryText)
-                                    Text(entry.taskTitle)
-                                        .font(.caption2)
-                                        .foregroundStyle(IslandStyle.secondaryText)
-                                        .lineLimit(1)
+                VStack(alignment: .leading, spacing: 12) {
+                    if !providerSessions.isEmpty {
+                        groupedCard(title: "最近会话", subtitle: "最近 3 次桥接会话") {
+                            VStack(alignment: .leading, spacing: 8) {
+                                ForEach(providerSessions) { session in
+                                    sessionRow(session: session, accentColor: accentColor)
                                 }
-
-                                Spacer(minLength: 8)
-
-                                Text(entry.timestamp.shortRelativeString)
-                                    .font(.caption2)
-                                    .foregroundStyle(IslandStyle.tertiaryText)
                             }
                         }
                     }
-                }
 
-                if statusService.canManuallyTransition {
-                    groupedCard(title: "调试状态", subtitle: "仅预览模式可见") {
-                        VStack(alignment: .leading, spacing: 10) {
-                            HStack(spacing: 8) {
-                                ForEach(CodexState.allCases, id: \.self) { manualState in
-                                    Button(manualState.displayName) {
-                                        statusService.setPreviewState(manualState)
+                    groupedCard(title: "最近状态", subtitle: "状态流转记录") {
+                        VStack(alignment: .leading, spacing: 7) {
+                            ForEach(historyEntries) { entry in
+                                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                                    CompactStateMark(state: entry.state, size: 8)
+
+                                    VStack(alignment: .leading, spacing: 1) {
+                                        Text(entry.state.dynamicIslandTitle)
+                                            .font(.caption.weight(.semibold))
+                                            .foregroundStyle(IslandStyle.primaryText)
+                                        Text(entry.taskTitle)
+                                            .font(.caption2)
+                                            .foregroundStyle(IslandStyle.secondaryText)
+                                            .lineLimit(1)
                                     }
-                                    .foregroundStyle(IslandStyle.primaryText)
-                                    .buttonStyle(
-                                        InteractiveButtonStyle(
-                                            prominence: .subtle,
-                                            accentColor: IslandStyle.accent(for: manualState),
-                                            cornerRadius: 12,
-                                            fillOpacity: 0.08,
-                                            animationsEnabled: settingsStore.settings.animationsEnabled
-                                        )
-                                    )
+
+                                    Spacer(minLength: 8)
+
+                                    Text(entry.timestamp.shortRelativeString)
+                                        .font(.caption2)
+                                        .foregroundStyle(IslandStyle.tertiaryText)
                                 }
                             }
+                        }
+                    }
 
-                            Button("下一个状态") {
-                                statusService.advance()
-                            }
-                            .foregroundStyle(IslandStyle.primaryText)
-                            .buttonStyle(
-                                InteractiveButtonStyle(
-                                    prominence: .secondary,
-                                    accentColor: accentColor,
-                                    cornerRadius: 12,
-                                    fillOpacity: 0.12,
-                                    animationsEnabled: settingsStore.settings.animationsEnabled
+                    if statusService.canManuallyTransition {
+                        groupedCard(title: "调试状态", subtitle: "仅预览模式可见") {
+                            VStack(alignment: .leading, spacing: 10) {
+                                HStack(spacing: 6) {
+                                    ForEach(CodexState.allCases, id: \.self) { manualState in
+                                        Button(manualState.displayName) {
+                                            statusService.setPreviewState(manualState)
+                                        }
+                                        .foregroundStyle(IslandStyle.primaryText)
+                                        .buttonStyle(
+                                            InteractiveButtonStyle(
+                                                prominence: .subtle,
+                                                accentColor: IslandStyle.accent(for: manualState),
+                                                cornerRadius: 12,
+                                                fillOpacity: 0.08,
+                                                animationsEnabled: settingsStore.settings.animationsEnabled
+                                            )
+                                        )
+                                    }
+                                }
+
+                                Button("下一个状态") {
+                                    statusService.advance()
+                                }
+                                .foregroundStyle(IslandStyle.primaryText)
+                                .buttonStyle(
+                                    InteractiveButtonStyle(
+                                        prominence: .secondary,
+                                        accentColor: accentColor,
+                                        cornerRadius: 12,
+                                        fillOpacity: 0.12,
+                                        animationsEnabled: settingsStore.settings.animationsEnabled
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }
+                .frame(width: 238, alignment: .topLeading)
             }
             .padding(.vertical, 2)
         }
@@ -123,7 +129,7 @@ struct ExpandedIslandView: View {
                     interactionPhase: interactionPhase,
                     contentPadding: 6
                 )
-                .frame(width: 70, height: 70)
+                .frame(width: 62, height: 62)
 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .center, spacing: 8) {
@@ -152,16 +158,16 @@ struct ExpandedIslandView: View {
                     }
 
                     Text(statusService.currentTask.title)
-                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
                         .foregroundStyle(IslandStyle.primaryText)
                         .lineLimit(2)
 
                     Text(statusService.currentTask.detail)
-                        .font(.subheadline)
+                        .font(.caption)
                         .foregroundStyle(IslandStyle.secondaryText)
                         .lineLimit(3)
 
-                    HStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 6) {
                         MetaChip(icon: "dot.radiowaves.left.and.right", text: statusService.providerStatusSummary, accentColor: accentColor)
                         if let connectionLabel = statusService.providerConnectionLabel {
                             MetaChip(icon: "link", text: connectionLabel, accentColor: accentColor)
@@ -214,7 +220,7 @@ struct ExpandedIslandView: View {
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
                     StateLabelPill(state: session.state, text: session.phaseLabel)
                     Text(session.displayCommand)
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
                         .foregroundStyle(IslandStyle.primaryText)
                         .lineLimit(1)
                     Spacer(minLength: 8)
@@ -224,7 +230,7 @@ struct ExpandedIslandView: View {
                 }
 
                 Text(session.primarySummary)
-                    .font(.subheadline)
+                    .font(.caption)
                     .foregroundStyle(IslandStyle.secondaryText)
                     .lineLimit(4)
 
@@ -276,7 +282,7 @@ struct ExpandedIslandView: View {
                 warningLine(errorSummary)
             }
         }
-        .padding(10)
+        .padding(9)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -372,7 +378,7 @@ struct ExpandedIslandView: View {
                 Text(subtitle)
                     .font(compactHeader ? .caption.weight(.semibold) : .caption)
                     .foregroundStyle(IslandStyle.secondaryText)
-                    .lineLimit(compactHeader ? 1 : 2)
+                    .lineLimit(compactHeader ? 2 : 2)
             }
 
             content()
