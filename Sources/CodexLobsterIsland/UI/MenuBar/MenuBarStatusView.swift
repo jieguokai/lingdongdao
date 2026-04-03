@@ -85,6 +85,18 @@ struct MenuBarStatusView: View {
                     .foregroundStyle(IslandStyle.tertiaryText)
                     .lineLimit(1)
 
+                if let connectionLabel = statusService.providerConnectionLabel {
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(statusService.isProviderConnected ? Color.green : IslandStyle.tertiaryText.opacity(0.8))
+                            .frame(width: 6, height: 6)
+                        Text(connectionLabel)
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(statusService.isProviderConnected ? Color.green.opacity(0.9) : IslandStyle.tertiaryText)
+                            .lineLimit(1)
+                    }
+                }
+
                 Button {
                     withAnimation(.easeOut(duration: 0.16)) {
                         isProviderListExpanded.toggle()
@@ -132,12 +144,23 @@ struct MenuBarStatusView: View {
                 Button("复制来源信息") {
                     let pasteboard = NSPasteboard.general
                     pasteboard.clearContents()
-                    pasteboard.setString(
-                        "\(statusService.providerStatusSummary)\n\(statusService.providerStatusDetail)",
-                        forType: .string
-                    )
+                    pasteboard.setString(statusService.providerDiagnosticsText, forType: .string)
                 }
                 .buttonStyle(menuButtonStyle(accentColor))
+
+                if !statusService.recentProviderSessions.isEmpty {
+                    Button("复制最近会话诊断") {
+                        let pasteboard = NSPasteboard.general
+                        pasteboard.clearContents()
+                        pasteboard.setString(
+                            statusService.recentProviderSessions
+                                .map(\.diagnosticLine)
+                                .joined(separator: "\n"),
+                            forType: .string
+                        )
+                    }
+                    .buttonStyle(menuButtonStyle(accentColor))
+                }
             }
             .padding(.bottom, 10)
 

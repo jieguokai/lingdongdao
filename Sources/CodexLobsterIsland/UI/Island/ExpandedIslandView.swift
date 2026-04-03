@@ -11,6 +11,7 @@ struct ExpandedIslandView: View {
         let titleOffset = interactionPhase == .pressed ? 0.8 : 0.0
         let timestampOpacity = interactionPhase == .hovered ? 0.86 : 0.70
         let historyEntries = Array(statusService.history)
+        let providerSessions = Array(statusService.recentProviderSessions.prefix(3))
 
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 14) {
@@ -91,6 +92,25 @@ struct ExpandedIslandView: View {
                     }
                 }
 
+                if let connectionLabel = statusService.providerConnectionLabel {
+                    HStack(alignment: .top, spacing: 8) {
+                        Circle()
+                            .fill(statusService.isProviderConnected ? Color.green : IslandStyle.tertiaryText.opacity(0.8))
+                            .frame(width: 7, height: 7)
+                            .padding(.top, 5)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(connectionLabel)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(statusService.isProviderConnected ? Color.green.opacity(0.92) : .white.opacity(0.86))
+                            if let connectionDetail = statusService.providerConnectionDetail {
+                                Text(connectionDetail)
+                                    .font(.caption2)
+                                    .foregroundStyle(IslandStyle.tertiaryText)
+                            }
+                        }
+                    }
+                }
+
                 if let providerError = statusService.lastProviderError {
                     HStack(alignment: .top, spacing: 8) {
                         Image(systemName: "exclamationmark.triangle.fill")
@@ -105,6 +125,50 @@ struct ExpandedIslandView: View {
             }
             .padding(.horizontal, 8)
             .padding(.bottom, 12)
+
+            if !providerSessions.isEmpty {
+                sectionDivider
+                    .padding(.bottom, 12)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("最近会话")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(IslandStyle.tertiaryText)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(Array(providerSessions.enumerated()), id: \.element.id) { index, session in
+                            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                                StatusBadgeView(state: session.state, compact: true)
+                                    .frame(minWidth: 60, alignment: .leading)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(session.commandName ?? session.title)
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.white.opacity(0.92))
+                                        .lineLimit(1)
+                                    Text(session.id)
+                                        .font(.caption2.monospaced())
+                                        .foregroundStyle(IslandStyle.tertiaryText)
+                                        .lineLimit(1)
+                                    Text(sessionSummaryLine(session))
+                                        .font(.caption2)
+                                        .foregroundStyle(IslandStyle.tertiaryText)
+                                        .lineLimit(1)
+                                }
+                                Spacer(minLength: 8)
+                                Text(session.timestamp.shortRelativeString)
+                                    .font(.caption2)
+                                    .foregroundStyle(IslandStyle.tertiaryText)
+                            }
+
+                            if index < providerSessions.count - 1 {
+                                sectionDivider
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 8)
+                .padding(.bottom, 12)
+            }
 
             sectionDivider
                 .padding(.bottom, 12)
@@ -193,5 +257,12 @@ struct ExpandedIslandView: View {
         Rectangle().fill(IslandStyle.separator)
             .frame(height: 1)
             .opacity(0.9)
+    }
+
+    private func sessionSummaryLine(_ session: CodexProviderSessionSummary) -> String {
+        if let exitCode = session.exitCode, exitCode != 0 {
+            return "\(session.detail) · exit \(exitCode)"
+        }
+        return session.detail
     }
 }

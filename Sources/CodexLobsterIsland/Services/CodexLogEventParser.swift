@@ -5,6 +5,10 @@ package struct CodexLogEvent: Sendable {
     package let title: String
     package let detail: String
     package let timestamp: Date
+    package let source: String?
+    package let command: String?
+    package let sessionID: String?
+    package let exitCode: Int?
 }
 
 package struct CodexLogEventParser {
@@ -33,7 +37,11 @@ package struct CodexLogEventParser {
             state: state,
             title: payload.title,
             detail: payload.detail,
-            timestamp: iso8601Formatter.date(from: payload.timestamp) ?? .now
+            timestamp: iso8601Formatter.date(from: payload.timestamp) ?? .now,
+            source: payload.source,
+            command: payload.command,
+            sessionID: payload.sessionID,
+            exitCode: payload.exitCode
         )
     }
 
@@ -57,7 +65,16 @@ package struct CodexLogEventParser {
         }
 
         let timestamp = dictionary["timestamp"].flatMap(iso8601Formatter.date(from:)) ?? .now
-        return CodexLogEvent(state: state, title: title, detail: detail, timestamp: timestamp)
+        return CodexLogEvent(
+            state: state,
+            title: title,
+            detail: detail,
+            timestamp: timestamp,
+            source: dictionary["source"],
+            command: dictionary["command"],
+            sessionID: dictionary["sessionId"] ?? dictionary["sessionID"],
+            exitCode: dictionary["exitCode"].flatMap(Int.init)
+        )
     }
 }
 
@@ -66,6 +83,21 @@ private struct JSONPayload: Decodable {
     let title: String
     let detail: String
     let timestamp: String
+    let source: String?
+    let command: String?
+    let sessionID: String?
+    let exitCode: Int?
+
+    private enum CodingKeys: String, CodingKey {
+        case state
+        case title
+        case detail
+        case timestamp
+        case source
+        case command
+        case sessionID = "sessionId"
+        case exitCode
+    }
 }
 
 enum CodexLogParsingError: LocalizedError {

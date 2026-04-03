@@ -27,6 +27,56 @@ python3 ./scripts/send-socket-event.py --state running --title "Apply patch" --d
 python3 ./scripts/append-log-event.py --state success --title "Build done" --detail "Latest task completed"
 ```
 
+## Codex CLI Bridge
+
+`Codex CLI Bridge` is the first real Codex integration path in this project. It wraps the actual `codex` CLI, prefers native JSON events when available, and feeds them back into the app through the existing local bridge.
+
+Run the app against the bridge provider:
+
+```bash
+CODEX_LOBSTER_PROVIDER_KIND=codexCLI ./scripts/run-app.sh
+```
+
+Recommended local workflow:
+
+1. Start the app with `CODEX_LOBSTER_PROVIDER_KIND=codexCLI`.
+2. Run Codex through `./scripts/codex-island.sh ...` instead of calling `codex` directly.
+3. If you need to diagnose a failed run, copy the latest session diagnostics from the menu bar or Settings panel.
+
+Then run Codex through the bridge:
+
+```bash
+python3 ./scripts/codex-bridge.py exec "summarize the current repo"
+```
+
+Or use the shell wrapper:
+
+```bash
+./scripts/codex-island.sh exec "summarize the current repo"
+```
+
+Notes:
+
+- `scripts/codex-bridge.py` uses `CODEX_LOBSTER_CODEX_BIN` first, then `which codex`, then `/Applications/Codex.app/Contents/Resources/codex`.
+- `exec`, `resume`, and `review` prefer native JSONL output when the installed Codex subcommand supports `--json`.
+- Events are appended to `~/.codex-lobster-island/codex-events.jsonl` by default.
+- Live updates are pushed to `tcp://127.0.0.1:45541` by default.
+- Each bridge invocation gets a `sessionId`, or you can provide one explicitly with `CODEX_LOBSTER_SESSION_ID`.
+- If the app is not running, the bridge still records the log, and the provider restores the latest state from that log on next launch.
+- The menu bar, settings panel, and expanded island now distinguish `真实 Codex 运行中` vs `最近 Codex 会话已完成/失败` vs `Codex CLI 不可用`.
+
+Common troubleshooting:
+
+- If the app shows `Codex CLI 不可用`, set `CODEX_LOBSTER_CODEX_BIN` to the real `codex` binary path.
+- If the app shows `等待 Codex CLI 桥接`, the island is running but no bridge event has arrived yet. Run `./scripts/codex-island.sh ...`.
+- If a session failed, open Settings and use `复制最近会话诊断` to capture the latest session summaries.
+
+Integration boundary:
+
+- This project now bridges real Codex CLI lifecycle and native JSONL events for `exec`, `resume`, and `review`.
+- It does not yet attach to arbitrary already-running Codex processes or consume a deeper internal Codex state API.
+- `processWatcher` still exists as a coarse fallback and should be treated as process-level observation, not task-level truth.
+
 ## Package as .app
 
 ```bash
@@ -206,15 +256,21 @@ Notes:
 ## Current status sources
 
 - `Mock`: built-in demo flow
+- `Codex CLI Bridge`: wraps the real `codex` CLI and emits structured lifecycle events
 - `Process Watcher`: watches local `codex` processes via `pgrep -fal codex`
 - `Log Parser`: reads the latest structured event from a local log file
 - `Socket Event`: listens for newline-delimited JSON events over local TCP
 
 ## Environment overrides
 
-- `CODEX_LOBSTER_PROVIDER_KIND=mock|processWatcher|logParser|socketEvent`
+- `CODEX_LOBSTER_PROVIDER_KIND=mock|codexCLI|processWatcher|logParser|socketEvent`
 - `CODEX_LOBSTER_LOG_PATH=/absolute/path/to/codex-status.log`
 - `CODEX_LOBSTER_SOCKET_PORT=45540`
+- `CODEX_LOBSTER_BRIDGE_LOG_PATH=/absolute/path/to/codex-events.jsonl`
+- `CODEX_LOBSTER_BRIDGE_PORT=45541`
+- `CODEX_LOBSTER_CODEX_BIN=/absolute/path/to/codex`
+- `CODEX_LOBSTER_SESSION_ID=optional-stable-session-id`
+- `CODEX_LOBSTER_BRIDGE_HEARTBEAT_SECONDS=8`
 
 ## Log parser format
 

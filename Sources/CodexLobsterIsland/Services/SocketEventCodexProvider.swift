@@ -5,6 +5,8 @@ import Network
 final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspectable {
     private let port: UInt16
     private let parser: CodexLogEventParser
+    private let publishesInitialSnapshot: Bool
+    private let publishesReadySnapshot: Bool
     private let queue: DispatchQueue
     private var listener: NWListener?
     private var connections: [ObjectIdentifier: NWConnection] = [:]
@@ -20,10 +22,14 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
 
     init(
         port: UInt16 = SocketEventCodexProvider.defaultPort(),
-        parser: CodexLogEventParser = CodexLogEventParser()
+        parser: CodexLogEventParser = CodexLogEventParser(),
+        publishesInitialSnapshot: Bool = true,
+        publishesReadySnapshot: Bool = true
     ) {
         self.port = port
         self.parser = parser
+        self.publishesInitialSnapshot = publishesInitialSnapshot
+        self.publishesReadySnapshot = publishesReadySnapshot
         self.queue = DispatchQueue(label: "com.codex.lobsterisland.socket-provider")
 
         let timestamp = Date()
@@ -39,7 +45,9 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
 
     func start(onUpdate: @escaping @MainActor (CodexStatusSnapshot) -> Void) {
         self.onUpdate = onUpdate
-        onUpdate(latestSnapshot)
+        if publishesInitialSnapshot {
+            onUpdate(latestSnapshot)
+        }
         startListener()
     }
 
@@ -88,8 +96,9 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
     private func handleListenerState(_ state: NWListener.State) {
         switch state {
         case .ready:
-            let now = Date()
             lastErrorMessage = nil
+            guard publishesReadySnapshot else { return }
+            let now = Date()
             latestSnapshot = makeSnapshot(
                 state: .idle,
                 title: "套接字监听已就绪",

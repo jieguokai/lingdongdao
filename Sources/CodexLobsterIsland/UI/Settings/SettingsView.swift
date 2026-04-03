@@ -163,6 +163,25 @@ struct SettingsView: View {
                         }
                     }
 
+                    if let connectionLabel = statusService.providerConnectionLabel {
+                        InteractiveFeedbackRow(
+                            accentColor: statusService.isProviderConnected ? .green : accentColor,
+                            animationsEnabled: settingsStore.settings.animationsEnabled,
+                            fillOpacity: 0.05
+                        ) {
+                            LabeledContent("桥接状态") {
+                                Text(connectionLabel)
+                                    .foregroundStyle(statusService.isProviderConnected ? Color.green : Color.secondary)
+                            }
+                        }
+                    }
+
+                    if let connectionDetail = statusService.providerConnectionDetail {
+                        Text(connectionDetail)
+                            .font(.caption)
+                            .foregroundStyle(Color.secondary.opacity(phase == .hovered ? 0.92 : 0.78))
+                    }
+
                     if let providerError = statusService.lastProviderError {
                         InteractiveFeedbackRow(
                             accentColor: .orange,
@@ -176,19 +195,67 @@ struct SettingsView: View {
                         }
                     }
 
+                    if !statusService.recentProviderSessions.isEmpty {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("最近会话")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+
+                            ForEach(statusService.recentProviderSessions.prefix(4)) { session in
+                                InteractiveFeedbackRow(
+                                    accentColor: IslandStyle.accent(for: session.state),
+                                    animationsEnabled: settingsStore.settings.animationsEnabled,
+                                    fillOpacity: 0.04
+                                ) {
+                                    HStack(alignment: .firstTextBaseline, spacing: 10) {
+                                        StatusBadgeView(state: session.state, compact: true)
+                                            .frame(minWidth: 58, alignment: .leading)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(session.commandName ?? session.title)
+                                                .font(.subheadline.weight(.medium))
+                                            Text(sessionSummaryLine(session))
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                                .lineLimit(1)
+                                            Text(session.id)
+                                                .font(.caption2.monospaced())
+                                                .foregroundStyle(.secondary)
+                                                .textSelection(.enabled)
+                                        }
+                                        Spacer(minLength: 8)
+                                        Text(session.timestamp.shortRelativeString)
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     HStack(spacing: 8) {
                         Button("复制来源信息") {
                             let pasteboard = NSPasteboard.general
                             pasteboard.clearContents()
-                            pasteboard.setString(
-                                "\(statusService.providerStatusSummary)\n\(statusService.providerStatusDetail)",
-                                forType: .string
-                            )
+                            pasteboard.setString(statusService.providerDiagnosticsText, forType: .string)
                         }
                         .buttonStyle(actionButtonStyle(accentColor))
 
                         Button("刷新当前来源") {
                             statusService.advance()
+                        }
+                        .buttonStyle(actionButtonStyle(accentColor))
+                    }
+
+                    if !statusService.recentProviderSessions.isEmpty {
+                        Button("复制最近会话诊断") {
+                            let pasteboard = NSPasteboard.general
+                            pasteboard.clearContents()
+                            pasteboard.setString(
+                                statusService.recentProviderSessions
+                                    .map(\.diagnosticLine)
+                                    .joined(separator: "\n"),
+                                forType: .string
+                            )
                         }
                         .buttonStyle(actionButtonStyle(accentColor))
                     }
@@ -288,6 +355,13 @@ struct SettingsView: View {
             fillOpacity: 0.14,
             animationsEnabled: settingsStore.settings.animationsEnabled
         )
+    }
+
+    private func sessionSummaryLine(_ session: CodexProviderSessionSummary) -> String {
+        if let exitCode = session.exitCode, exitCode != 0 {
+            return "\(session.detail) · exit \(exitCode)"
+        }
+        return session.detail
     }
 
     @ViewBuilder

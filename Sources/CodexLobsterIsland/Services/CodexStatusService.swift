@@ -58,6 +58,40 @@ final class CodexStatusService {
         inspectableProvider?.lastProviderError
     }
 
+    var providerConnectionLabel: String? {
+        inspectableProvider?.providerConnectionLabel
+    }
+
+    var providerConnectionDetail: String? {
+        inspectableProvider?.providerConnectionDetail
+    }
+
+    var isProviderConnected: Bool {
+        inspectableProvider?.isProviderConnected ?? false
+    }
+
+    var recentProviderSessions: [CodexProviderSessionSummary] {
+        inspectableProvider?.recentProviderSessions ?? []
+    }
+
+    var providerDiagnosticsText: String {
+        let header = [
+            providerStatusSummary,
+            providerConnectionLabel,
+            providerStatusDetail,
+            providerConnectionDetail
+        ]
+        .compactMap { $0 }
+        .joined(separator: "\n")
+
+        guard !recentProviderSessions.isEmpty else {
+            return header
+        }
+
+        let sessions = recentProviderSessions.map(\.diagnosticLine).joined(separator: "\n")
+        return "\(header)\n\n最近会话\n\(sessions)"
+    }
+
     func replaceProvider(_ provider: CodexStatusProviding) {
         self.provider.stop()
         self.provider = provider
