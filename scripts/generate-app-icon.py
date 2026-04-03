@@ -109,11 +109,11 @@ def add_depth_panel(base: Image.Image, size: int, inset: int) -> None:
     draw.rounded_rectangle(
         panel_rect,
         radius=int(size * 0.16),
-        fill=(25, 31, 42, 160),
-        outline=(255, 255, 255, 12),
+        fill=(27, 33, 45, 222),
+        outline=(255, 255, 255, 18),
         width=max(1, int(size * 0.008)),
     )
-    panel = panel.filter(ImageFilter.GaussianBlur(radius=size * 0.01))
+    panel = panel.filter(ImageFilter.GaussianBlur(radius=size * 0.006))
     base.alpha_composite(panel)
 
 
