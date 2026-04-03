@@ -1,6 +1,60 @@
 import SwiftUI
 
 enum IslandStyle {
+    static var notchFill: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(.sRGB, red: 0.055, green: 0.058, blue: 0.068, opacity: 0.995),
+                Color(.sRGB, red: 0.032, green: 0.035, blue: 0.043, opacity: 1)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    static var notchEdge: Color {
+        Color.white.opacity(0.09)
+    }
+
+    static var notchInnerEdge: Color {
+        Color.white.opacity(0.04)
+    }
+
+    static var codexPanelFill: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(.sRGB, red: 0.078, green: 0.083, blue: 0.095, opacity: 0.995),
+                Color(.sRGB, red: 0.052, green: 0.056, blue: 0.066, opacity: 1)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    static var codexPanelStroke: Color {
+        Color.white.opacity(0.08)
+    }
+
+    static var codexPanelInnerStroke: Color {
+        Color.white.opacity(0.03)
+    }
+
+    static var codexSectionFill: Color {
+        Color.white.opacity(0.026)
+    }
+
+    static var codexSectionStroke: Color {
+        Color.white.opacity(0.05)
+    }
+
+    static var codexSectionSeparator: Color {
+        Color.white.opacity(0.06)
+    }
+
+    static var codexHeaderText: Color {
+        Color.white.opacity(0.98)
+    }
+
     static func background(for state: CodexState) -> AnyShapeStyle {
         AnyShapeStyle(shellGradient(for: state))
     }
