@@ -13,10 +13,11 @@ package struct CodexLogEvent: Sendable {
     package let usageSummary: String?
     package let phase: String?
     package let errorSummary: String?
+    package let approvalReason: String?
+    package let approvalActions: [CodexApprovalAction]
 }
 
 package struct CodexLogEventParser {
-    private let decoder = JSONDecoder()
     private let iso8601Formatter = ISO8601DateFormatter()
 
     package init() {}
@@ -33,23 +34,26 @@ package struct CodexLogEventParser {
 
     private func parseJSON(line: String) throws -> CodexLogEvent? {
         guard let data = line.data(using: .utf8) else { return nil }
-        guard let payload = try? decoder.decode(JSONPayload.self, from: data) else { return nil }
-        guard let state = CodexState(rawValue: payload.state.lowercased()) else {
-            throw CodexLogParsingError.invalidState(payload.state)
+        guard let rawPayload = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        guard let rawState = rawPayload["state"] as? String else { return nil }
+        guard let state = state(from: rawState) else {
+            throw CodexLogParsingError.invalidState(rawState)
         }
         return CodexLogEvent(
             state: state,
-            title: payload.title,
-            detail: payload.detail,
-            timestamp: iso8601Formatter.date(from: payload.timestamp) ?? .now,
-            source: payload.source,
-            command: payload.command,
-            sessionID: payload.sessionID,
-            exitCode: payload.exitCode,
-            responsePreview: payload.responsePreview,
-            usageSummary: payload.usageSummary,
-            phase: payload.phase,
-            errorSummary: payload.errorSummary
+            title: string(from: rawPayload["title"]) ?? state.dynamicIslandTitle,
+            detail: string(from: rawPayload["detail"]) ?? "",
+            timestamp: string(from: rawPayload["timestamp"]).flatMap(iso8601Formatter.date(from:)) ?? .now,
+            source: string(from: rawPayload["source"]),
+            command: string(from: rawPayload["command"]),
+            sessionID: string(from: rawPayload["sessionId"]) ?? string(from: rawPayload["sessionID"]),
+            exitCode: int(from: rawPayload["exitCode"]),
+            responsePreview: string(from: rawPayload["responsePreview"]),
+            usageSummary: string(from: rawPayload["usageSummary"]),
+            phase: string(from: rawPayload["phase"]),
+            errorSummary: string(from: rawPayload["errorSummary"]),
+            approvalReason: string(from: rawPayload["approvalReason"]),
+            approvalActions: approvalActions(from: rawPayload["approvalActions"])
         )
     }
 
@@ -65,7 +69,7 @@ package struct CodexLogEventParser {
         let dictionary = Dictionary(uniqueKeysWithValues: pairs)
         guard
             let rawState = dictionary["state"],
-            let state = CodexState(rawValue: rawState.lowercased()),
+            let state = state(from: rawState),
             let title = dictionary["title"],
             let detail = dictionary["detail"]
         else {
@@ -85,38 +89,87 @@ package struct CodexLogEventParser {
             responsePreview: dictionary["responsePreview"],
             usageSummary: dictionary["usageSummary"],
             phase: dictionary["phase"],
-            errorSummary: dictionary["errorSummary"]
+            errorSummary: dictionary["errorSummary"],
+            approvalReason: dictionary["approvalReason"],
+            approvalActions: []
         )
     }
-}
 
-private struct JSONPayload: Decodable {
-    let state: String
-    let title: String
-    let detail: String
-    let timestamp: String
-    let source: String?
-    let command: String?
-    let sessionID: String?
-    let exitCode: Int?
-    let responsePreview: String?
-    let usageSummary: String?
-    let phase: String?
-    let errorSummary: String?
+    private func state(from rawState: String) -> CodexState? {
+        switch rawState.lowercased() {
+        case "typing":
+            return .typing
+        case "awaiting_reply", "awaitingreply", "waiting_for_reply", "needs_user_reply", "needsuserreply":
+            return .awaitingReply
+        case "awaiting_approval":
+            return .awaitingApproval
+        case "awaitingapproval":
+            return .awaitingApproval
+        default:
+            return CodexState(rawValue: rawState.lowercased())
+        }
+    }
 
-    private enum CodingKeys: String, CodingKey {
-        case state
-        case title
-        case detail
-        case timestamp
-        case source
-        case command
-        case sessionID = "sessionId"
-        case exitCode
-        case responsePreview
-        case usageSummary
-        case phase
-        case errorSummary
+    private func string(from value: Any?) -> String? {
+        value as? String
+    }
+
+    private func int(from value: Any?) -> Int? {
+        value as? Int
+    }
+
+    private func approvalActions(from value: Any?) -> [CodexApprovalAction] {
+        guard let array = value as? [Any] else { return [] }
+
+        return array.enumerated().compactMap { index, element in
+            if let raw = element as? String {
+                return CodexApprovalAction(
+                    id: "approval-\(index)",
+                    label: raw,
+                    role: inferredRole(from: raw),
+                    actionPayload: raw
+                )
+            }
+
+            guard let dictionary = element as? [String: Any] else { return nil }
+            let label = (dictionary["label"] as? String) ?? (dictionary["title"] as? String) ?? (dictionary["name"] as? String)
+            guard let label else { return nil }
+            let id = (dictionary["id"] as? String) ?? "approval-\(index)"
+            let role = (dictionary["role"] as? String).flatMap(role(from:)) ?? inferredRole(from: label)
+            let actionPayload = payloadString(from: dictionary["actionPayload"] ?? dictionary["payload"] ?? dictionary["value"] ?? label)
+            return CodexApprovalAction(
+                id: id,
+                label: label,
+                role: role,
+                actionPayload: actionPayload
+            )
+        }
+    }
+
+    private func role(from rawRole: String) -> CodexApprovalAction.Role? {
+        switch rawRole.lowercased() {
+        case "approve", "approved", "accept", "continue", "yes":
+            return .approve
+        case "reject", "denied", "abort", "cancel", "no":
+            return .reject
+        default:
+            return .neutral
+        }
+    }
+
+    private func inferredRole(from label: String) -> CodexApprovalAction.Role {
+        role(from: label) ?? .neutral
+    }
+
+    private func payloadString(from value: Any) -> String {
+        if let string = value as? String {
+            return string
+        }
+        if let data = try? JSONSerialization.data(withJSONObject: value),
+           let string = String(data: data, encoding: .utf8) {
+            return string
+        }
+        return "\(value)"
     }
 }
 

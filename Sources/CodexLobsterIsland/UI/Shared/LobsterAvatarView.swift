@@ -22,9 +22,9 @@ struct LobsterAvatarView: View {
             ZStack {
                 Circle()
                     .fill(IslandStyle.avatarGlow(for: state))
-                    .scaleEffect(interactionPhase == .hovered ? 1.02 : 0.96)
-                    .blur(radius: interactionPhase == .pressed ? 7 : 10)
-                    .opacity(interactionPhase == .resting ? 0.20 : 0.32)
+                    .scaleEffect(interactionPhase == .hovered ? 1.0 : 0.94)
+                    .blur(radius: interactionPhase == .pressed ? 4 : 5)
+                    .opacity(interactionPhase == .resting ? 0.10 : 0.16)
 
                 GeometryReader { proxy in
                     let availableWidth = max(proxy.size.width - (contentPadding * 2), 1)
@@ -36,9 +36,10 @@ struct LobsterAvatarView: View {
                     let yInset = contentPadding + ((availableHeight - (spriteHeight * pixel)) / 2)
 
                     ForEach(pixels) { square in
-                        RoundedRectangle(cornerRadius: pixel * 0.18, style: .continuous)
+                        let renderScale: CGFloat = square.x < 0 ? 2.0 : 1.0
+                        Rectangle()
                             .fill(color(for: square))
-                            .frame(width: pixel * 0.92, height: pixel * 0.92)
+                            .frame(width: pixel * renderScale, height: pixel * renderScale)
                             .position(
                                 x: xInset + (CGFloat(square.x - bounds.minX) + 0.5) * pixel,
                                 y: yInset + (CGFloat(square.y - bounds.minY) + 0.5) * pixel
@@ -54,20 +55,83 @@ struct LobsterAvatarView: View {
 
     private func color(for pixel: PixelLobsterSprite.Pixel) -> Color {
         switch pixel.role {
+        case .outline:
+            return Color(.sRGB, red: 0.07, green: 0.04, blue: 0.05, opacity: 0.99)
+        case .shellHighlight:
+            return palette.shellHighlight
         case .shell:
-            let base = state == .error
-                ? Color(.sRGB, red: 0.96, green: 0.34, blue: 0.31, opacity: 1)
-                : Color(.sRGB, red: 1.0, green: 0.57, blue: 0.23, opacity: 1)
-            return base.opacity(0.92)
-        case .claw:
-            let base = state == .success
-                ? Color(.sRGB, red: 0.35, green: 0.85, blue: 0.56, opacity: 1)
-                : Color(.sRGB, red: 1.0, green: 0.42, blue: 0.46, opacity: 1)
-            return base.opacity(0.92)
+            return palette.shell
+        case .shellShadow:
+            return palette.shellShadow
         case .belly:
-            return Color(.sRGB, white: 0.97, opacity: 0.94)
-        case .eye:
-            return Color.black.opacity(0.94)
+            return palette.belly
+        case .bellyShadow:
+            return palette.bellyShadow
+        case .eyeWhite:
+            return Color.white.opacity(0.98)
+        case .eyePupil:
+            return Color.white.opacity(0.98)
+        }
+    }
+
+    private var palette: LobsterPalette {
+        switch state {
+        case .idle:
+            return LobsterPalette(
+                shellHighlight: Color(.sRGB, red: 0.72, green: 0.83, blue: 1.0, opacity: 1),
+                shell: Color(.sRGB, red: 0.46, green: 0.61, blue: 0.97, opacity: 1),
+                shellShadow: Color(.sRGB, red: 0.18, green: 0.29, blue: 0.56, opacity: 1),
+                belly: Color(.sRGB, red: 0.60, green: 0.73, blue: 1.0, opacity: 1),
+                bellyShadow: Color(.sRGB, red: 0.29, green: 0.41, blue: 0.72, opacity: 1)
+            )
+        case .typing:
+            return LobsterPalette(
+                shellHighlight: Color(.sRGB, red: 1.0, green: 0.87, blue: 0.49, opacity: 1),
+                shell: Color(.sRGB, red: 0.95, green: 0.72, blue: 0.26, opacity: 1),
+                shellShadow: Color(.sRGB, red: 0.59, green: 0.40, blue: 0.10, opacity: 1),
+                belly: Color(.sRGB, red: 1.0, green: 0.80, blue: 0.39, opacity: 1),
+                bellyShadow: Color(.sRGB, red: 0.76, green: 0.55, blue: 0.16, opacity: 1)
+            )
+        case .running:
+            return LobsterPalette(
+                shellHighlight: Color(.sRGB, red: 0.56, green: 0.92, blue: 1.0, opacity: 1),
+                shell: Color(.sRGB, red: 0.13, green: 0.73, blue: 0.91, opacity: 1),
+                shellShadow: Color(.sRGB, red: 0.04, green: 0.34, blue: 0.50, opacity: 1),
+                belly: Color(.sRGB, red: 0.34, green: 0.84, blue: 1.0, opacity: 1),
+                bellyShadow: Color(.sRGB, red: 0.07, green: 0.47, blue: 0.62, opacity: 1)
+            )
+        case .awaitingReply:
+            return LobsterPalette(
+                shellHighlight: Color(.sRGB, red: 1.0, green: 0.88, blue: 0.50, opacity: 1),
+                shell: Color(.sRGB, red: 0.98, green: 0.76, blue: 0.26, opacity: 1),
+                shellShadow: Color(.sRGB, red: 0.63, green: 0.46, blue: 0.08, opacity: 1),
+                belly: Color(.sRGB, red: 1.0, green: 0.83, blue: 0.38, opacity: 1),
+                bellyShadow: Color(.sRGB, red: 0.79, green: 0.59, blue: 0.14, opacity: 1)
+            )
+        case .awaitingApproval:
+            return LobsterPalette(
+                shellHighlight: Color(.sRGB, red: 1.0, green: 0.79, blue: 0.43, opacity: 1),
+                shell: Color(.sRGB, red: 0.99, green: 0.64, blue: 0.22, opacity: 1),
+                shellShadow: Color(.sRGB, red: 0.67, green: 0.39, blue: 0.07, opacity: 1),
+                belly: Color(.sRGB, red: 1.0, green: 0.73, blue: 0.34, opacity: 1),
+                bellyShadow: Color(.sRGB, red: 0.82, green: 0.51, blue: 0.12, opacity: 1)
+            )
+        case .success:
+            return LobsterPalette(
+                shellHighlight: Color(.sRGB, red: 0.60, green: 0.92, blue: 0.72, opacity: 1),
+                shell: Color(.sRGB, red: 0.24, green: 0.79, blue: 0.55, opacity: 1),
+                shellShadow: Color(.sRGB, red: 0.07, green: 0.42, blue: 0.27, opacity: 1),
+                belly: Color(.sRGB, red: 0.42, green: 0.88, blue: 0.64, opacity: 1),
+                bellyShadow: Color(.sRGB, red: 0.12, green: 0.54, blue: 0.35, opacity: 1)
+            )
+        case .error:
+            return LobsterPalette(
+                shellHighlight: Color(.sRGB, red: 1.0, green: 0.64, blue: 0.56, opacity: 1),
+                shell: Color(.sRGB, red: 0.95, green: 0.43, blue: 0.36, opacity: 1),
+                shellShadow: Color(.sRGB, red: 0.60, green: 0.19, blue: 0.17, opacity: 1),
+                belly: Color(.sRGB, red: 1.0, green: 0.54, blue: 0.47, opacity: 1),
+                bellyShadow: Color(.sRGB, red: 0.77, green: 0.28, blue: 0.24, opacity: 1)
+            )
         }
     }
 
@@ -75,4 +139,12 @@ struct LobsterAvatarView: View {
         guard animationsEnabled else { return 0 }
         return Int((phase * PixelLobsterSprite.tickRate(for: state)).rounded(.down))
     }
+}
+
+private struct LobsterPalette {
+    let shellHighlight: Color
+    let shell: Color
+    let shellShadow: Color
+    let belly: Color
+    let bellyShadow: Color
 }

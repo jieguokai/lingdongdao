@@ -9,11 +9,21 @@ struct FloatingIslandRootView: View {
     @State private var isHovered = false
     @GestureState private var isPressed = false
 
-    private let expandedPanelCornerRadius: CGFloat = 22
-    private let headerOverlap: CGFloat = 8
+    private let panelInset: CGFloat = 16
+
+    private func islandScale(for phase: InteractivePhase, isExpanded: Bool) -> CGFloat {
+        switch phase {
+        case .resting:
+            return 1.0
+        case .hovered:
+            return isExpanded ? 1.025 : 1.065
+        case .pressed:
+            return isExpanded ? 1.01 : 1.03
+        }
+    }
 
     var body: some View {
-        let state = statusService.currentState
+        let state = statusService.effectiveDisplayState
         let interactionPhase: InteractivePhase = {
             if isPressed {
                 return .pressed
@@ -28,6 +38,12 @@ struct FloatingIslandRootView: View {
                 compactShell(state: state, interactionPhase: interactionPhase)
             }
         }
+        .scaleEffect(islandScale(for: interactionPhase, isExpanded: isExpanded))
+        .frame(
+            width: isExpanded ? AppConstants.expandedIslandSize.width : AppConstants.compactIslandSize.width,
+            height: isExpanded ? AppConstants.expandedIslandSize.height : AppConstants.compactIslandSize.height,
+            alignment: .center
+        )
         .contentShape(Rectangle())
         .animation(.spring(response: 0.26, dampingFraction: 0.84), value: isExpanded)
         .animation(.spring(response: 0.24, dampingFraction: 0.82), value: interactionPhase)
@@ -43,52 +59,43 @@ struct FloatingIslandRootView: View {
     }
 
     private func compactShell(state: CodexState, interactionPhase: InteractivePhase) -> some View {
-        let notchShape = NotchShellShape()
-        let glowOpacity = interactionPhase == .resting ? 0.16 : 0.24
-        let glowRadius = interactionPhase == .pressed ? 10.0 : 16.0
-        let glowScale = interactionPhase == .hovered ? 1.05 : 1.0
-        let glowOffset = interactionPhase == .pressed ? 1.0 : 0.0
-        let content = CompactIslandView(
+        compactHeaderSurface(state: state, interactionPhase: interactionPhase)
+    }
+
+    private func compactHeaderContent(interactionPhase: InteractivePhase, isExpanded: Bool) -> some View {
+        CompactIslandView(
             statusService: statusService,
             settingsStore: settingsStore,
             interactionPhase: interactionPhase,
-            isExpanded: false,
+            isExpanded: isExpanded,
             onToggleExpanded: onToggleExpanded
         )
-        let surface = notchShape
-            .fill(IslandStyle.notchFill)
-            .overlay {
-                notchShape
-                    .strokeBorder(IslandStyle.notchEdge, lineWidth: 0.8)
-            }
-            .overlay {
-                notchShape
-                    .strokeBorder(IslandStyle.notchInnerEdge, lineWidth: 0.55)
-                    .padding(1.2)
-            }
-        let glow = notchShape
-            .fill(IslandStyle.glow(for: state).opacity(glowOpacity))
-            .blur(radius: glowRadius)
-            .scaleEffect(glowScale)
-            .offset(y: glowOffset)
+        .frame(width: AppConstants.compactIslandContentSize.width, height: AppConstants.compactIslandContentSize.height)
+    }
+
+    private func compactHeaderSurface(state: CodexState, interactionPhase: InteractivePhase) -> some View {
+        let notchShape = NotchShellShape(topEdgeExtension: 0, topTransitionRadius: 0, bottomCornerRadius: 14)
+        let content = compactHeaderContent(interactionPhase: interactionPhase, isExpanded: false)
 
         return content
-        .background {
-            glow
-        }
-        .background(surface)
-        .clipShape(notchShape)
-        .shadow(color: Color.black.opacity(0.32), radius: 16, y: 7)
-        .frame(width: AppConstants.compactIslandSize.width, height: AppConstants.compactIslandSize.height)
+            .background {
+                notchShape
+                    .fill(Color.black)
+            }
+            .clipShape(notchShape)
+            .frame(width: AppConstants.compactIslandContentSize.width, height: AppConstants.compactIslandContentSize.height)
     }
 
     private func expandedShell(state: CodexState, interactionPhase: InteractivePhase) -> some View {
-        let panelHeight = AppConstants.expandedIslandSize.height - AppConstants.compactIslandSize.height + headerOverlap
-        let panelShape = RoundedRectangle(cornerRadius: expandedPanelCornerRadius, style: .continuous)
+        let panelShape = NotchShellShape(topEdgeExtension: 0, topTransitionRadius: 0, bottomCornerRadius: 14)
+        let panelWidth = AppConstants.expandedIslandContentSize.width - (panelInset * 2)
+        let contentInsetTop: CGFloat = 10
+        let contentInsetBottom: CGFloat = 14
+        let contentHeight = AppConstants.expandedIslandContentSize.height - contentInsetTop - contentInsetBottom
 
-        return VStack(spacing: -headerOverlap) {
-            compactShell(state: state, interactionPhase: interactionPhase)
-                .zIndex(1)
+        return ZStack(alignment: .top) {
+            panelShape
+                .fill(Color.black)
 
             ExpandedIslandView(
                 statusService: statusService,
@@ -96,29 +103,10 @@ struct FloatingIslandRootView: View {
                 interactionPhase: interactionPhase,
                 onToggleExpanded: onToggleExpanded
             )
-            .frame(width: AppConstants.expandedIslandSize.width, height: panelHeight, alignment: .topLeading)
-            .background(
-                panelShape
-                    .fill(IslandStyle.codexPanelFill)
-                    .overlay(alignment: .top) {
-                        Capsule(style: .continuous)
-                            .fill(Color(.sRGB, red: 0.046, green: 0.049, blue: 0.058, opacity: 1))
-                            .frame(width: AppConstants.compactIslandSize.width - 28, height: 16)
-                            .offset(y: -8)
-                    }
-                    .overlay {
-                        panelShape
-                            .strokeBorder(IslandStyle.codexPanelStroke, lineWidth: 0.85)
-                    }
-                    .overlay {
-                        panelShape
-                            .strokeBorder(IslandStyle.codexPanelInnerStroke, lineWidth: 0.6)
-                            .padding(1.3)
-                    }
-            )
-            .clipShape(panelShape)
-            .shadow(color: Color.black.opacity(0.35), radius: 24, y: 12)
+            .frame(width: panelWidth, height: contentHeight, alignment: .topLeading)
+            .offset(y: contentInsetTop)
         }
-        .frame(width: AppConstants.expandedIslandSize.width, height: AppConstants.expandedIslandSize.height, alignment: .top)
+        .frame(width: AppConstants.expandedIslandContentSize.width, height: AppConstants.expandedIslandContentSize.height, alignment: .top)
+        .clipShape(panelShape)
     }
 }

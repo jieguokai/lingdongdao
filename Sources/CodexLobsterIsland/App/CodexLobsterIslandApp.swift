@@ -16,7 +16,9 @@ struct CodexLobsterIslandApp: App {
         MenuBarExtra {
             MenuBarStatusView(
                 statusService: bootstrap.dependencies.statusService,
+                taskLaunchService: bootstrap.dependencies.taskLaunchService,
                 appUpdateService: bootstrap.dependencies.appUpdateService,
+                soundManager: bootstrap.dependencies.soundManager,
                 settingsStore: bootstrap.dependencies.settingsStore,
                 launchAtLoginManager: bootstrap.dependencies.launchAtLoginManager
             )

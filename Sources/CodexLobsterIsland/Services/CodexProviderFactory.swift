@@ -6,6 +6,8 @@ enum CodexProviderFactory {
         switch kind {
         case .mock:
             MockStatusGenerator()
+        case .desktopThread:
+            CodexDesktopThreadProvider()
         case .codexCLI:
             CodexCLIBridgeProvider()
         case .processWatcher:

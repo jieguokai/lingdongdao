@@ -55,26 +55,36 @@ struct InteractiveButtonStyle: ButtonStyle {
         }
 
         var body: some View {
-            let fillColor: Color = {
+            let backgroundOpacity: Double = {
                 switch prominence {
                 case .primary:
-                    return accentColor
-                case .secondary, .subtle:
-                    return .white
+                    return phase == .pressed ? max(fillOpacity, 0.18) : max(fillOpacity, 0.14)
+                case .secondary:
+                    return phase == .resting ? 0.03 : 0.06
+                case .subtle:
+                    return phase == .resting ? 0.0 : 0.04
                 }
             }()
+            let labelColor: Color = {
+                switch prominence {
+                case .primary:
+                    return IslandStyle.primaryText
+                case .secondary:
+                    return phase == .resting ? IslandStyle.secondaryText : IslandStyle.primaryText
+                case .subtle:
+                    return phase == .resting ? IslandStyle.tertiaryText : IslandStyle.secondaryText
+                }
+            }()
+            let backgroundColor = prominence == .primary ? accentColor.opacity(backgroundOpacity) : Color.white.opacity(backgroundOpacity)
 
             configuration.label
+                .foregroundStyle(labelColor)
                 .frame(maxWidth: expandsHorizontally ? .infinity : nil, alignment: .leading)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 7)
+                .padding(.horizontal, 9)
+                .padding(.vertical, 5)
                 .background(
-                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                        .fill(
-                            fillColor.opacity(
-                                fillOpacity + (phase == .hovered ? 0.05 : 0.0) + (phase == .pressed ? 0.08 : 0.0)
-                            )
-                        )
+                    Capsule(style: .continuous)
+                        .fill(backgroundColor)
                 )
                 .interactiveSurface(
                     phase: phase,
@@ -83,7 +93,7 @@ struct InteractiveButtonStyle: ButtonStyle {
                     cornerRadius: cornerRadius,
                     animationsEnabled: animationsEnabled
                 )
-                .contentShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+                .contentShape(Capsule(style: .continuous))
                 .onHover { hovering in
                     isHovered = hovering
                 }

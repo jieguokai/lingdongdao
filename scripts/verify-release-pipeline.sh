@@ -21,8 +21,19 @@ DIST_DIR="$DIST_DIR" \
 [[ -f "$ZIP_PATH" ]]
 [[ -d "$FRAMEWORK_PATH" ]]
 [[ -d "$APP_PATH/Contents/Resources/Audio" ]]
-[[ -f "$APP_PATH/Contents/Resources/Audio/success.wav" ]]
-[[ -f "$APP_PATH/Contents/Resources/Audio/error.wav" ]]
+
+AUDIO_FILES=(
+  typing.wav
+  running.wav
+  awaitingReply.wav
+  approval.wav
+  success.wav
+  error.wav
+)
+
+for audio_file in "${AUDIO_FILES[@]}"; do
+  [[ -f "$APP_PATH/Contents/Resources/Audio/$audio_file" ]]
+done
 
 APP_VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP_PATH/Contents/Info.plist")"
 APP_BUILD="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP_PATH/Contents/Info.plist")"
@@ -30,13 +41,11 @@ APP_BUILD="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$APP_PATH/Cont
 [[ "$APP_VERSION" == "0.1.0" ]]
 [[ "$APP_BUILD" == "1" ]]
 
-SOURCE_SUCCESS_SHA="$(shasum -a 256 "$ROOT/Sources/CodexLobsterIsland/Resources/Audio/success.wav" | awk '{print $1}')"
-SOURCE_ERROR_SHA="$(shasum -a 256 "$ROOT/Sources/CodexLobsterIsland/Resources/Audio/error.wav" | awk '{print $1}')"
-PACKAGED_SUCCESS_SHA="$(shasum -a 256 "$APP_PATH/Contents/Resources/Audio/success.wav" | awk '{print $1}')"
-PACKAGED_ERROR_SHA="$(shasum -a 256 "$APP_PATH/Contents/Resources/Audio/error.wav" | awk '{print $1}')"
-
-[[ "$SOURCE_SUCCESS_SHA" == "$PACKAGED_SUCCESS_SHA" ]]
-[[ "$SOURCE_ERROR_SHA" == "$PACKAGED_ERROR_SHA" ]]
+for audio_file in "${AUDIO_FILES[@]}"; do
+  SOURCE_SHA="$(shasum -a 256 "$ROOT/Sources/CodexLobsterIsland/Resources/Audio/$audio_file" | awk '{print $1}')"
+  PACKAGED_SHA="$(shasum -a 256 "$APP_PATH/Contents/Resources/Audio/$audio_file" | awk '{print $1}')"
+  [[ "$SOURCE_SHA" == "$PACKAGED_SHA" ]]
+done
 
 SIGNATURE_INFO="$(codesign -dv --verbose=4 "$APP_PATH" 2>&1)"
 if [[ "$SIGNATURE_INFO" != *"Signature=adhoc"* ]]; then

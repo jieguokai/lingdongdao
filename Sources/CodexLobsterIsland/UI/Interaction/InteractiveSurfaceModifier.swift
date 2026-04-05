@@ -6,6 +6,7 @@ struct InteractiveSurfaceModifier: ViewModifier {
     let accentColor: Color
     let cornerRadius: CGFloat
     let animationsEnabled: Bool
+    let allowsScaling: Bool
 
     func body(content: Content) -> some View {
         let style = InteractionStyle.surface(
@@ -15,45 +16,14 @@ struct InteractiveSurfaceModifier: ViewModifier {
         )
 
         content
-            .scaleEffect(style.scale)
+            .scaleEffect(allowsScaling ? style.scale : 1.0)
             .offset(y: style.yOffset)
             .shadow(
                 color: .black.opacity(style.shadowOpacity),
-                radius: style.shadowRadius,
+                radius: max(4.0, style.shadowRadius * 0.65),
                 x: 0,
-                y: max(2.0, 5.0 - style.yOffset)
+                y: max(1.0, 3.5 - style.yOffset)
             )
-            .overlay {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(style.highlightOpacity),
-                                Color.white.opacity(style.highlightOpacity * 0.55),
-                                accentColor.opacity(style.glowOpacity * 0.12)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 0.8
-                    )
-            }
-            .overlay(alignment: .top) {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(style.highlightOpacity * 0.9),
-                                Color.white.opacity(0.0)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .frame(height: max(12.0, cornerRadius))
-                    .blur(radius: 5.0)
-                    .allowsHitTesting(false)
-            }
             .animation(Self.animation(for: phase, animationsEnabled: animationsEnabled), value: phase)
     }
 
@@ -79,7 +49,8 @@ extension View {
         prominence: InteractionProminence,
         accentColor: Color,
         cornerRadius: CGFloat,
-        animationsEnabled: Bool
+        animationsEnabled: Bool,
+        allowsScaling: Bool = false
     ) -> some View {
         modifier(
             InteractiveSurfaceModifier(
@@ -87,7 +58,8 @@ extension View {
                 prominence: prominence,
                 accentColor: accentColor,
                 cornerRadius: cornerRadius,
-                animationsEnabled: animationsEnabled
+                animationsEnabled: animationsEnabled,
+                allowsScaling: allowsScaling
             )
         )
     }

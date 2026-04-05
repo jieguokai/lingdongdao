@@ -6,11 +6,10 @@ import Observation
 final class AppBootstrap {
     let dependencies: AppDependencies
     private var hasStarted = false
-    private var activeProviderKind: CodexProviderKind
+    private var lastObservedSnapshot: CodexStatusSnapshot?
 
     init(dependencies: AppDependencies = .live) {
         self.dependencies = dependencies
-        self.activeProviderKind = dependencies.settingsStore.settings.providerKind
         wireEvents()
     }
 
@@ -25,6 +24,9 @@ final class AppBootstrap {
         applySettings(dependencies.settingsStore.settings)
         dependencies.appUpdateService.start()
         dependencies.statusService.start()
+        Task {
+            await dependencies.taskLaunchService.refreshAuthenticationState()
+        }
         dependencies.floatingIslandWindowManager.refresh()
     }
 
@@ -32,7 +34,9 @@ final class AppBootstrap {
         dependencies.statusService.onSnapshotApplied = { [weak self] snapshot in
             guard let self else { return }
             dependencies.floatingIslandWindowManager.refresh()
-            dependencies.soundManager.play(for: snapshot.state)
+            dependencies.floatingIslandWindowManager.handleDisplayStateChange(dependencies.statusService.effectiveDisplayState)
+            dependencies.soundManager.handleTransition(from: lastObservedSnapshot, to: snapshot)
+            lastObservedSnapshot = snapshot
         }
 
         dependencies.settingsStore.onSettingsChanged = { [weak self] settings in
@@ -42,13 +46,9 @@ final class AppBootstrap {
 
     private func applySettings(_ settings: AppSettings) {
         dependencies.soundManager.isMuted = settings.isMuted
+        dependencies.soundManager.isDoNotDisturbEnabled = settings.isDoNotDisturbEnabled
         dependencies.floatingIslandWindowManager.setVisible(settings.showsIsland)
         dependencies.floatingIslandWindowManager.refresh()
         dependencies.launchAtLoginManager.applyPreference(settings.launchAtLoginEnabled)
-        if settings.providerKind != activeProviderKind {
-            activeProviderKind = settings.providerKind
-            let provider = CodexProviderFactory.makeProvider(kind: settings.providerKind)
-            dependencies.statusService.replaceProvider(provider)
-        }
     }
 }

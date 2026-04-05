@@ -1,22 +1,24 @@
 import SwiftUI
 
 struct NotchShellShape: InsettableShape {
-    var topCornerRadius: CGFloat = 7
-    var bottomCornerRadius: CGFloat = 12
+    var topEdgeExtension: CGFloat = 0
+    var topTransitionRadius: CGFloat = 0
+    var bottomCornerRadius: CGFloat = 14
     var insetAmount: CGFloat = 0
 
     func path(in rect: CGRect) -> Path {
         let insetRect = rect.insetBy(dx: insetAmount, dy: insetAmount)
-        let topRadius = min(topCornerRadius, insetRect.width / 2, insetRect.height / 2)
         let bottomRadius = min(bottomCornerRadius, insetRect.width / 2, insetRect.height / 2)
+        let extensionWidth = min(topEdgeExtension, insetRect.width / 2)
+        let topLeft = insetRect.minX - extensionWidth
+        let topRight = insetRect.maxX + extensionWidth
 
         var path = Path()
-        path.move(to: CGPoint(x: insetRect.minX + topRadius, y: insetRect.minY))
-        path.addLine(to: CGPoint(x: insetRect.maxX - topRadius, y: insetRect.minY))
-        path.addQuadCurve(
-            to: CGPoint(x: insetRect.maxX, y: insetRect.minY + topRadius),
-            control: CGPoint(x: insetRect.maxX, y: insetRect.minY)
-        )
+        path.move(to: CGPoint(x: topLeft, y: insetRect.minY))
+        path.addLine(to: CGPoint(x: topRight, y: insetRect.minY))
+        path.addLine(to: CGPoint(x: topRight, y: insetRect.minY))
+        path.addLine(to: CGPoint(x: topRight, y: insetRect.minY))
+        path.addLine(to: CGPoint(x: insetRect.maxX, y: insetRect.minY))
         path.addLine(to: CGPoint(x: insetRect.maxX, y: insetRect.maxY - bottomRadius))
         path.addQuadCurve(
             to: CGPoint(x: insetRect.maxX - bottomRadius, y: insetRect.maxY),
@@ -27,11 +29,8 @@ struct NotchShellShape: InsettableShape {
             to: CGPoint(x: insetRect.minX, y: insetRect.maxY - bottomRadius),
             control: CGPoint(x: insetRect.minX, y: insetRect.maxY)
         )
-        path.addLine(to: CGPoint(x: insetRect.minX, y: insetRect.minY + topRadius))
-        path.addQuadCurve(
-            to: CGPoint(x: insetRect.minX + topRadius, y: insetRect.minY),
-            control: CGPoint(x: insetRect.minX, y: insetRect.minY)
-        )
+        path.addLine(to: CGPoint(x: insetRect.minX, y: insetRect.minY))
+        path.addLine(to: CGPoint(x: topLeft, y: insetRect.minY))
         path.closeSubpath()
         return path
     }

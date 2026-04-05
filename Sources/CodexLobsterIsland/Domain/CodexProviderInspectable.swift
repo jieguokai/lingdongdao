@@ -6,6 +6,7 @@ protocol CodexProviderInspectable: AnyObject {
     var providerStatusSummary: String { get }
     var providerStatusDetail: String { get }
     var lastProviderError: String? { get }
+    var providerRuntimeDiagnostics: String? { get }
     var providerConnectionLabel: String? { get }
     var providerConnectionDetail: String? { get }
     var isProviderConnected: Bool { get }
@@ -14,6 +15,7 @@ protocol CodexProviderInspectable: AnyObject {
 }
 
 extension CodexProviderInspectable {
+    var providerRuntimeDiagnostics: String? { nil }
     var providerConnectionLabel: String? { nil }
     var providerConnectionDetail: String? { nil }
     var isProviderConnected: Bool { false }

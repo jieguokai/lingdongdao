@@ -42,6 +42,9 @@ rm -rf "$APP_DIR"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR" "$RESOURCES_DIR/Audio" "$FRAMEWORKS_DIR"
 
 cp "$EXECUTABLE" "$MACOS_DIR/$APP_NAME"
+if [[ -d "$RESOURCE_BUNDLE" ]]; then
+  ditto "$RESOURCE_BUNDLE" "$RESOURCES_DIR/$(basename "$RESOURCE_BUNDLE")"
+fi
 if [[ -d "$AUDIO_SOURCE_DIR" ]]; then
   ditto "$AUDIO_SOURCE_DIR" "$RESOURCES_DIR/Audio"
 elif [[ -d "$RESOURCE_BUNDLE/Audio" ]]; then
@@ -101,5 +104,12 @@ fi
 if [[ -n "$SPARKLE_PUBLIC_ED_KEY" ]]; then
   /usr/libexec/PlistBuddy -c "Add :SUPublicEDKey string $SPARKLE_PUBLIC_ED_KEY" "$CONTENTS_DIR/Info.plist"
 fi
+
+/usr/bin/codesign \
+  --force \
+  --deep \
+  --sign - \
+  --identifier "$BUNDLE_IDENTIFIER" \
+  "$APP_DIR"
 
 echo "Packaged app at: $APP_DIR"

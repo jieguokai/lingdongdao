@@ -13,6 +13,7 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
     private var bufferedData: [ObjectIdentifier: Data] = [:]
     private var onUpdate: (@MainActor (CodexStatusSnapshot) -> Void)?
     private var lastErrorMessage: String?
+    private(set) var latestEvent: CodexLogEvent?
     private(set) var latestSnapshot: CodexStatusSnapshot
 
     var providerKind: CodexProviderKind { .socketEvent }
@@ -188,10 +189,14 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
 
             do {
                 let event = try parser.parse(line: line)
+                latestEvent = event
                 latestSnapshot = makeSnapshot(
                     state: event.state,
                     title: event.title,
                     detail: event.detail,
+                    summary: event.responsePreview,
+                    approvalReason: event.approvalReason,
+                    approvalActions: event.approvalActions,
                     timestamp: event.timestamp,
                     resetStart: latestSnapshot.state != event.state
                 )
@@ -220,6 +225,9 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
         state: CodexState,
         title: String,
         detail: String,
+        summary: String? = nil,
+        approvalReason: String? = nil,
+        approvalActions: [CodexApprovalAction] = [],
         timestamp: Date,
         resetStart: Bool
     ) -> CodexStatusSnapshot {
@@ -227,6 +235,9 @@ final class SocketEventCodexProvider: CodexStatusProviding, CodexProviderInspect
         let task = CodexTask(
             title: title,
             detail: detail,
+            summary: summary,
+            approvalReason: approvalReason,
+            approvalActions: approvalActions,
             state: state,
             startedAt: startedAt,
             updatedAt: timestamp

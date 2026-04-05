@@ -20,20 +20,44 @@ Project docs:
 ./scripts/run-app.sh
 ```
 
-默认状态来源现在是 `codexCLI`。如果你希望浮窗跟着真实 Codex 状态变化，必须通过 bridge 启动 Codex，而不是直接调用 `codex`。
+如果你正在做 UI 微调，不想每次手动重新安装，推荐先固定安装一次，再开自动监听：
+
+```bash
+./scripts/install-app.sh
+./scripts/dev-watch.sh
+```
+
+这样后续每次保存 `Sources/`、`Package.swift`、资源或关键打包脚本，watcher 都会自动重建、覆盖 `~/Applications/CodexLobsterIsland.app`，并重新拉起这个固定路径的 app。
+
+默认状态来源是 `desktopThread`，正式版主路径已经改成：
+
+1. 启动 app
+2. 首次使用时，给 app 打开 `辅助功能` 与 `屏幕录制` 权限；如果想拿到更灵敏的 typing，再额外打开 `输入监控`
+3. 直接在 Codex Desktop 当前对话线程里输入、执行、确认
+4. 小龙虾会优先跟随当前前台 Codex Desktop 线程同步状态
+5. 菜单栏顶部输入框继续保留为兼容入口；如果还没登录，app 会先弹原生确认窗，再打开 Codex 官方浏览器登录流程
+
+这样使用时会自动获得：
+
+- `typing / running / awaiting_approval / success / error` 实时状态
+- 声音提示
+- 顶部岛体反馈
+- 展开浮窗里的原生确认按钮
+
+如果桌面对话同步暂时不可用，菜单栏输入仍然会自动通过本地 bridge 拉起 `codex exec`，作为兼容入口。
 
 ## Send test events
 
 ```bash
 python3 ./scripts/send-socket-event.py --state running --title "Apply patch" --detail "Editing Swift files"
-python3 ./scripts/append-log-event.py --state success --title "Build done" --detail "Latest task completed"
+python3 ./scripts/send-socket-event.py --state success --title "Build done" --detail "Latest task completed"
 ```
 
 ## Codex CLI Bridge
 
 `Codex CLI Bridge` is the first real Codex integration path in this project. It wraps the actual `codex` CLI, prefers native JSON events when available, and feeds them back into the app through the existing local bridge.
 
-Run the app against the bridge provider:
+如果你只想使用兼容的 CLI bridge，也可以显式切到 `codexCLI`：
 
 ```bash
 CODEX_LOBSTER_PROVIDER_KIND=codexCLI ./scripts/run-app.sh
@@ -42,8 +66,9 @@ CODEX_LOBSTER_PROVIDER_KIND=codexCLI ./scripts/run-app.sh
 Recommended local workflow:
 
 1. Start the app with `CODEX_LOBSTER_PROVIDER_KIND=codexCLI`.
-2. Run Codex through `./scripts/codex-island.sh ...` instead of calling `codex` directly.
+2. Use the menu bar input as the primary entrypoint for `exec`.
 3. If you need to diagnose a failed run, copy the latest session diagnostics from the menu bar or Settings panel.
+4. `scripts/codex-island.sh` and `scripts/codex-bridge.py` remain available as compatibility paths for external workflows and debugging.
 
 Then run Codex through the bridge:
 
@@ -51,10 +76,10 @@ Then run Codex through the bridge:
 python3 ./scripts/codex-bridge.py exec "summarize the current repo"
 ```
 
-Or use the shell wrapper:
+Or use the shell wrapper in compatibility mode:
 
 ```bash
-./scripts/codex-island.sh exec "summarize the current repo"
+cd /path/to/lingdongdao && ./scripts/codex-island.sh exec "summarize the current repo"
 ```
 
 Notes:
@@ -63,23 +88,31 @@ Notes:
 - `exec`, `resume`, and `review` prefer native JSONL output when the installed Codex subcommand supports `--json`.
 - Final session summaries now fold native agent reply snippets and token usage into the bridge detail, so copied diagnostics are closer to Codex's real session output.
 - Native `thread_id` is surfaced directly in bridge diagnostics, so the island can show which Codex thread the latest session belongs to.
+- Native approval requests now flow through the bridge as `awaiting_approval`, including approval reason and original action payloads.
+- Bridge approval actions are written to `~/.codex-lobster-island/actions/<session>.jsonl` by default and forwarded back to the underlying Codex process.
 - Events are appended to `~/.codex-lobster-island/codex-events.jsonl` by default.
 - Live updates are pushed to `tcp://127.0.0.1:45541` by default.
 - Each bridge invocation gets a `sessionId`, or you can provide one explicitly with `CODEX_LOBSTER_SESSION_ID`.
-- If the app is not running, the bridge still records the log, and the provider restores the latest state from that log on next launch.
-- The menu bar, settings panel, and expanded island now distinguish `真实 Codex 运行中` vs `最近 Codex 会话已完成/失败` vs `Codex CLI 不可用`.
+- `Codex CLI Bridge` 现在是纯实时模式：顶部岛体、展开面板、确认按钮和声音都只依赖本地 socket 实时事件。
+- `codex-events.jsonl` 仍然会写入，但只用于调试和诊断，不再用于 app 冷启动后的状态恢复。
+- 如果桌面对话同步权限未开通，UI 会明确显示 `桌面对话同步未启用`，不会伪装成已接入当前线程。
+- 如果 app 启动时 bridge 没有连上，`codexCLI` 模式下 UI 会明确显示 `等待 bridge`，不会从旧日志恢复出一个陈旧任务。
 
 Common troubleshooting:
 
 - If the app shows `Codex CLI 不可用`, set `CODEX_LOBSTER_CODEX_BIN` to the real `codex` binary path.
-- If the app shows `等待 Codex CLI 桥接`, the island is running but no bridge event has arrived yet. Run `./scripts/codex-island.sh ...`.
+- If the app shows `未登录`, use the menu bar action to open the official Codex login flow and complete browser authorization.
+- If the app shows `桌面对话同步未启用`, open macOS System Settings and grant Accessibility plus Screen Recording to Codex Lobster Island. Input Monitoring is optional but improves typing detection.
+- If the app shows `等待激活 Codex`, bring the Codex Desktop window to the foreground and start interacting with the current thread.
+- If the app shows `等待 bridge`, the island is running in `codexCLI` mode but no realtime bridge event has arrived yet. The primary fix is to submit a task from the menu bar.
+- If the app shows `bridge 已断开`, the last `codexCLI` realtime session has ended or timed out. Start a new task from the menu bar to reconnect.
 - If you run `codex` directly in another terminal, the island will not treat that as real-time truth. Bridge mode is the only supported real-status path.
 - If a session failed, open Settings and use `复制最近会话诊断` to capture the latest session summaries.
 
 Integration boundary:
 
-- This project now bridges real Codex CLI lifecycle and native JSONL events for `exec`, `resume`, and `review`.
-- It does not yet attach to arbitrary already-running Codex processes or consume a deeper internal Codex state API.
+- This project now supports two real status paths: current Codex Desktop thread sync and `codexCLI` bridge lifecycle events.
+- The desktop-thread mode uses a local adapter over macOS permissions plus OCR/Accessibility; it does not rely on a public Codex Desktop lifecycle API.
 - `processWatcher` still exists as a coarse fallback and should be treated as process-level observation, not task-level truth.
 
 ## Package as .app
@@ -87,6 +120,34 @@ Integration boundary:
 ```bash
 ./scripts/package-app.sh
 open dist/CodexLobsterIsland.app
+```
+
+For stable macOS permissions during local development, prefer installing the packaged app to a fixed path and launching that copy:
+
+```bash
+./scripts/install-app.sh
+```
+
+This installs the app to `~/Applications/CodexLobsterIsland.app`. Grant `辅助功能` and `屏幕录制` to that installed path, not to temporary copies opened directly from `dist/`.
+
+For day-to-day UI tweaking after the first install, use the watcher instead of repeatedly reinstalling by hand:
+
+```bash
+./scripts/dev-watch.sh
+```
+
+By default it:
+
+1. Watches `Sources/`, `Package.swift`, `Config/`, resources, and the packaging scripts
+2. Ignores `.build/`, `build/`, and `dist/` to avoid self-trigger loops
+3. Rebuilds and reinstalls to `~/Applications/CodexLobsterIsland.app`
+4. Relaunches the installed app automatically
+
+Useful options:
+
+```bash
+./scripts/dev-watch.sh --interval 0.5 --debounce 0.4
+./scripts/dev-watch.sh --no-open-initial
 ```
 
 ## Release workflow
@@ -273,6 +334,7 @@ Notes:
 - `CODEX_LOBSTER_SOCKET_PORT=45540`
 - `CODEX_LOBSTER_BRIDGE_LOG_PATH=/absolute/path/to/codex-events.jsonl`
 - `CODEX_LOBSTER_BRIDGE_PORT=45541`
+- `CODEX_LOBSTER_BRIDGE_ACTION_DIR=/absolute/path/to/approval-actions`
 - `CODEX_LOBSTER_CODEX_BIN=/absolute/path/to/codex`
 - `CODEX_LOBSTER_SESSION_ID=optional-stable-session-id`
 - `CODEX_LOBSTER_BRIDGE_HEARTBEAT_SECONDS=8`
@@ -288,7 +350,9 @@ Notes:
 Supported states:
 
 - `idle`
+- `typing`
 - `running`
+- `awaiting_approval`
 - `success`
 - `error`
 
@@ -299,6 +363,11 @@ Supported states:
 ```json
 {"state":"success","title":"Task finished","detail":"Codex completed the current job","timestamp":"2026-03-30T08:20:30Z"}
 ```
+
+Approval-capable events can also include:
+
+- `approvalReason`
+- `approvalActions`
 
 Example sender:
 

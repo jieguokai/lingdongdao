@@ -18,3 +18,14 @@ protocol CodexStatusProviding: AnyObject {
 protocol CodexStatusControllable: AnyObject {
     func transition(to state: CodexState) -> CodexStatusSnapshot
 }
+
+@MainActor
+protocol CodexApprovalControlling: AnyObject {
+    func performApprovalAction(_ action: CodexApprovalAction) async throws
+}
+
+@MainActor
+protocol CodexPermissionControlling: AnyObject {
+    func requestPermissionPrompt()
+    func recheckPermissionState()
+}

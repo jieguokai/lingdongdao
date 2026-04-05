@@ -38,17 +38,20 @@ struct InteractiveFeedbackRow<Content: View>: View {
     }
 
     var body: some View {
+        let baseFill: Color = isCompact ? .clear : IslandStyle.codexSectionFill
+        let overlayOpacity = fillOpacity * (phase == .resting ? 0.45 : (phase == .pressed ? 1.2 : 0.9))
+
         content()
             .padding(.horizontal, isCompact ? 8 : 10)
             .padding(.vertical, isCompact ? 6 : 8)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(
-                        accentColor.opacity(
-                            fillOpacity + (phase == .hovered ? 0.04 : 0.0) + (phase == .pressed ? 0.06 : 0.0)
-                        )
-                    )
+                    .fill(baseFill)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                            .fill((isCompact ? Color.white : accentColor).opacity(overlayOpacity))
+                    }
             )
             .interactiveSurface(
                 phase: phase,

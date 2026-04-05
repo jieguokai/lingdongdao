@@ -16,254 +16,391 @@ enum PixelLobsterSprite {
 
     struct Pixel: Identifiable, Hashable {
         enum Role: Hashable {
+            case outline
+            case shellHighlight
             case shell
-            case claw
+            case shellShadow
             case belly
-            case eye
-        }
-
-        enum Source: Hashable {
-            case body
-            case animated
+            case bellyShadow
+            case eyeWhite
+            case eyePupil
         }
 
         let x: Int
         let y: Int
         let role: Role
-        let source: Source
 
-        var id: String { "\(x),\(y)" }
-        var isBodyPixel: Bool { source == .body }
+        var id: String { "\(x),\(y),\(role)" }
     }
 
-    static let gridSize = 16
-    static let renderBounds = makeRenderBounds()
+    private static let frameSize = 11
+    private static let markerSize = 5
+    private static let markerGap = 3
+    private static let markerOffsetX = 2
+    private static let markerMinX = -(markerSize + markerGap)
+    private static let markerMinY = 3
+    static let gridSize = frameSize
+    static let renderBounds = Bounds(minX: markerMinX, maxX: frameSize - 1, minY: 0, maxY: frameSize - 1)
 
     static func pixels(for state: CodexState, tick: Int) -> [Pixel] {
         let track = tracksByState[state] ?? idleTrack
         let frameIndex = track.sequence[normalizedIndex(for: tick, count: track.sequence.count)]
-        let frame = track.frames[normalizedIndex(for: frameIndex, count: track.frames.count)]
-        return (bodyPixels + frame).sorted(by: pixelSort)
+        let sprite = track.frames[normalizedIndex(for: frameIndex, count: track.frames.count)]
+        return markerPixels(for: state) + sprite
     }
 
     static func tickRate(for state: CodexState) -> Double {
         switch state {
         case .idle:
-            2.6
+            1.2
+        case .typing:
+            3.8
         case .running:
-            5.8
+            5.0
+        case .awaitingReply:
+            2.0
+        case .awaitingApproval:
+            1.8
         case .success:
-            4.6
+            4.2
         case .error:
-            6.8
+            3.3
         }
     }
 
-    private static let bodyPixels: [Pixel] = [
-        pixel(5, 3, .shell, .body), pixel(6, 3, .shell, .body), pixel(7, 3, .shell, .body), pixel(8, 3, .shell, .body), pixel(9, 3, .shell, .body), pixel(10, 3, .shell, .body),
-        pixel(4, 4, .shell, .body), pixel(5, 4, .shell, .body), pixel(7, 4, .shell, .body), pixel(8, 4, .shell, .body), pixel(10, 4, .shell, .body), pixel(11, 4, .shell, .body),
-        pixel(4, 5, .shell, .body), pixel(5, 5, .shell, .body), pixel(6, 5, .shell, .body), pixel(7, 5, .shell, .body), pixel(8, 5, .shell, .body), pixel(9, 5, .shell, .body), pixel(10, 5, .shell, .body), pixel(11, 5, .shell, .body),
-        pixel(5, 6, .belly, .body), pixel(6, 6, .belly, .body), pixel(7, 6, .belly, .body), pixel(8, 6, .belly, .body), pixel(9, 6, .belly, .body), pixel(10, 6, .belly, .body),
-        pixel(5, 7, .belly, .body), pixel(6, 7, .belly, .body), pixel(9, 7, .belly, .body), pixel(10, 7, .belly, .body),
-        pixel(6, 8, .shell, .body), pixel(9, 8, .shell, .body),
-        pixel(5, 9, .shell, .body), pixel(10, 9, .shell, .body)
-    ]
-
-    private static let idleFrames: [[Pixel]] = [
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 1), (10, 1)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 1), (10, 1)],
-            tail: [(7, 9), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 7), (3, 8), (4, 9)],
-            rightClaw: [(11, 7), (12, 8), (11, 9)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 4), (9, 4)]
-        )
-    ]
-
     private static let idleTrack = AnimationTrack(
-        frames: idleFrames,
-        sequence: [0, 1, 1, 2, 2, 1, 1, 0, 0, 3, 3, 0]
+        frames: [
+            frame([
+                "...X...X...",
+                "..XHXXXHX..",
+                ".XHHSSSHHX.",
+                "XHSSSSSSSHX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "X.SBBBBBS.X",
+                ".XSTTTTTSX.",
+                "..XDDDDDX..",
+                "...XDDDXX..",
+                "....XXX...."
+            ]),
+            frame([
+                "....X.X....",
+                "...HXXXH...",
+                "..XHSSSHX..",
+                ".XSSSSSSSX.",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                ".XSBBBBBSX.",
+                "..XTTTTTX..",
+                "...XDDDX...",
+                "...XXDXX...",
+                "....XXX...."
+            ])
+        ],
+        sequence: [0, 0, 1, 0]
     )
 
-    private static let runningFrames: [[Pixel]] = [
-        dynamicFrame(
-            leftClaw: [(4, 7), (3, 8), (4, 9)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 1), (10, 1)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 9), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 7), (12, 8), (11, 9)],
-            antenna: [(5, 1), (10, 1)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 9), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 1), (10, 1)],
-            tail: [(7, 9), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        )
-    ]
+    private static let typingTrack = AnimationTrack(
+        frames: [
+            frame([
+                "X..X...X..X",
+                ".XHXXXXXHX.",
+                "XHHSSSSSHHX",
+                "XHSSSSSSSHX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "X.SBBBBBS.X",
+                "..XTTTTTX..",
+                "...XDDDX...",
+                "...XXDXX...",
+                "....XXX...."
+            ]),
+            frame([
+                "XX.......XX",
+                ".XHXXXXXHX.",
+                "XHHSSSSSHHX",
+                "XSSSSSSSSSX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "X.SBBBBBS.X",
+                "..XTTTTTX..",
+                "..XXDDDXX..",
+                "...XDDD....",
+                "....XXX...."
+            ]),
+            frame([
+                ".XX..X..XX.",
+                "XHXXXXXXXHX",
+                ".XHSSSSSHX.",
+                "XHSSSSSSSHX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                ".XSBBBBBSX.",
+                "...XTTTX...",
+                "..XXDDDXX..",
+                "...XDDD....",
+                "....XXX...."
+            ])
+        ],
+        sequence: [0, 1, 2, 1]
+    )
 
     private static let runningTrack = AnimationTrack(
-        frames: runningFrames,
-        sequence: [0, 1, 2, 3, 4, 3, 2, 1]
+        frames: [
+            frame([
+                "X...X.X...X",
+                ".XHXXXXXHX.",
+                "XHHSSSSSHHX",
+                "XSSSSSSSSSX",
+                "XSSEP.PESSX",
+                "XSSSBBBSSSX",
+                ".XSBBBBBSX.",
+                "..XTTTTTX..",
+                ".XXDDDDDXX.",
+                "..XDDXDDX..",
+                "...XX.XX..."
+            ]),
+            frame([
+                ".X.......X.",
+                "XHHX...XHHX",
+                "XHSSSSSSSHX",
+                "XSSSSSSSSSX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "X.SBBBBBS.X",
+                "..XTTTTTX..",
+                ".XXDDDDDXX.",
+                "...XDDDXX..",
+                "...X.X.X..."
+            ]),
+            frame([
+                "X...X.X...X",
+                ".HHX...XHH.",
+                "XHSSSSSSSHX",
+                "XSSSSSSSSSX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                ".XSBBBBBSX.",
+                "..XTTTTTX..",
+                "..XXDDDXX..",
+                ".XXD...DXX.",
+                "...XX.XX..."
+            ])
+        ],
+        sequence: [0, 1, 2, 1]
     )
 
-    private static let successFrames: [[Pixel]] = [
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 3), (9, 3)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 7), (3, 8), (4, 9)],
-            rightClaw: [(11, 7), (12, 8), (11, 9)],
-            antenna: [(5, 1), (10, 1)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 3), (9, 3)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 6), (3, 7), (4, 8)],
-            rightClaw: [(11, 6), (12, 7), (11, 8)],
-            antenna: [(5, 1), (10, 1)],
-            tail: [(7, 8), (8, 8)],
-            eyes: [(6, 3), (9, 3)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 9), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        )
-    ]
+    private static let awaitingReplyTrack = AnimationTrack(
+        frames: [
+            frame([
+                "...X...X...",
+                "..XHXXXH...",
+                ".XHHSSSHX..",
+                "XHSSSSSSSX.",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                ".XSBBBBBSX.",
+                "..XTTTTTX..",
+                "...XDDDX...",
+                "...XXDXX...",
+                "....XXX...."
+            ]),
+            frame([
+                "....X...X..",
+                "...HXXXHX..",
+                "..XHSSSHHX.",
+                ".XSSSSSSSX.",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "..XSBBBBSX.",
+                "...XTTTTX..",
+                "...XDDDX...",
+                "...XXDXX...",
+                "....XXX...."
+            ]),
+            frame([
+                "..X...X....",
+                "..XHXXXH...",
+                ".XHHSSSHX..",
+                "XHSSSSSSSX.",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                ".XSBBBBBSX.",
+                "...XTTTTX..",
+                "...XDDDX...",
+                "..XXDXX....",
+                "....XXX...."
+            ])
+        ],
+        sequence: [0, 1, 0, 2, 0]
+    )
+
+    private static let awaitingApprovalTrack = AnimationTrack(
+        frames: [
+            frame([
+                "..XX...XX..",
+                ".XHXXXXXHX.",
+                "XHHSSSSSHHX",
+                "XSSSSSSSSSX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "..XBBBBBX..",
+                "..XTTTTTX..",
+                "...XDDDX...",
+                "...XDDDX...",
+                "....XXX...."
+            ]),
+            frame([
+                ".XHX...XHX.",
+                "XHXXXXXXXHX",
+                ".XHSSSSSHX.",
+                "XSSSSSSSSSX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "..XBBBBBX..",
+                "..XTTTTTX..",
+                "...XDDDX...",
+                "...XDDDX...",
+                "....XXX...."
+            ])
+        ],
+        sequence: [0, 1, 0, 1]
+    )
 
     private static let successTrack = AnimationTrack(
-        frames: successFrames,
-        sequence: [0, 1, 2, 3, 4, 3, 2, 1, 0, 0]
+        frames: [
+            frame([
+                "XX..X.X..XX",
+                ".XHXXXXXHX.",
+                "XHHSSSSSHHX",
+                "XHSSSSSSSHX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "X.SBBBBBS.X",
+                "..XTTTTTX..",
+                "..XXDDDXX..",
+                ".XX.XDX.XX.",
+                "....XXX...."
+            ]),
+            frame([
+                "XHX.....XHX",
+                ".HHX...XHH.",
+                "XHHSSSSSHHX",
+                "XSSSSSSSSSX",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "..XBBBBBX..",
+                "...TTTTT...",
+                "..XXDDDXX..",
+                "...XXDXX...",
+                "....XXX...."
+            ]),
+            frame([
+                ".XX.X.X.XX.",
+                "XHXXXXXXXHX",
+                ".XHSSSSSHX.",
+                "XHSSSSSSSHX",
+                "XSSEP.PESSX",
+                "XSSSBBBSSSX",
+                ".XSBBBBBSX.",
+                "..XTTTTTX..",
+                ".XXDDDDDXX.",
+                "..XDDXDDX..",
+                "...XX.XX..."
+            ])
+        ],
+        sequence: [0, 1, 2, 1]
     )
 
-    private static let errorFrames: [[Pixel]] = [
-        dynamicFrame(
-            leftClaw: [(4, 9), (3, 10), (4, 11)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 3), (10, 2)],
-            tail: [(7, 9), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 7), (12, 8), (11, 9)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 9), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 9), (12, 10), (11, 11)],
-            antenna: [(5, 2), (10, 3)],
-            tail: [(7, 8), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 2), (10, 2)],
-            tail: [(7, 8), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        ),
-        dynamicFrame(
-            leftClaw: [(4, 8), (3, 9), (4, 10)],
-            rightClaw: [(11, 8), (12, 9), (11, 10)],
-            antenna: [(5, 3), (10, 2)],
-            tail: [(7, 9), (8, 9)],
-            eyes: [(6, 4), (9, 4)]
-        )
-    ]
-
     private static let errorTrack = AnimationTrack(
-        frames: errorFrames,
-        sequence: [0, 1, 2, 3, 4, 3, 2, 1]
+        frames: [
+            frame([
+                "....X.X....",
+                "...HXXXH...",
+                "..XHSSSHX..",
+                ".XSSSSSSSX.",
+                "XSSEP.PESSX",
+                "X.SSBBBSS.X",
+                "..XBBBBBX..",
+                "..XTTTTTX..",
+                ".XXDDDDD...",
+                "...XDDDX...",
+                "...XXXXX..."
+            ]),
+            frame([
+                "...X...X...",
+                "..H.....H..",
+                ".XHSSSSSHX.",
+                "XSSSSSSSSSX",
+                "XSSEP.PESSX",
+                "X.SSBBBSS.X",
+                "..XBBBBBX..",
+                "...TTTTT...",
+                "..XXDDDXX..",
+                "...XDDDX...",
+                "...XXXXX..."
+            ]),
+            frame([
+                "....X.X....",
+                ".H.......H.",
+                "..XHSSSHX..",
+                ".XSSSSSSSX.",
+                "XSSEP.PESSX",
+                ".XSSBBBSSX.",
+                "X..BBBBB..X",
+                "..XTTTTTX..",
+                "...XDDDX...",
+                "..XXDDDXX..",
+                "...XXXXX..."
+            ])
+        ],
+        sequence: [0, 1, 2, 1]
     )
 
     private static let tracksByState: [CodexState: AnimationTrack] = [
         .idle: idleTrack,
+        .typing: typingTrack,
         .running: runningTrack,
+        .awaitingReply: awaitingReplyTrack,
+        .awaitingApproval: awaitingApprovalTrack,
         .success: successTrack,
         .error: errorTrack
     ]
 
-    private static func dynamicFrame(
-        leftClaw: [(Int, Int)],
-        rightClaw: [(Int, Int)],
-        antenna: [(Int, Int)],
-        tail: [(Int, Int)],
-        eyes: [(Int, Int)]
-    ) -> [Pixel] {
-        leftClaw.map { pixel($0.0, $0.1, .claw, .animated) }
-        + rightClaw.map { pixel($0.0, $0.1, .claw, .animated) }
-        + antenna.map { pixel($0.0, $0.1, .claw, .animated) }
-        + tail.map { pixel($0.0, $0.1, .shell, .animated) }
-        + eyes.map { pixel($0.0, $0.1, .eye, .animated) }
+    private static func frame(_ rows: [String]) -> [Pixel] {
+        precondition(rows.count == frameSize, "PixelLobsterSprite frame must contain \(frameSize) rows.")
+        return rows.enumerated().flatMap { y, row in
+            precondition(row.count == frameSize, "PixelLobsterSprite row must contain \(frameSize) columns.")
+            return Array(row).enumerated().compactMap { element -> Pixel? in
+                let x = element.offset
+                let character = element.element
+                guard let role = role(for: character) else { return nil }
+                return Pixel(x: x, y: y, role: role)
+            }
+        }
     }
 
-    private static func pixel(_ x: Int, _ y: Int, _ role: Pixel.Role, _ source: Pixel.Source) -> Pixel {
-        Pixel(x: x, y: y, role: role, source: source)
+    private static func role(for character: Character) -> Pixel.Role? {
+        switch character {
+        case "X":
+            return .outline
+        case "H":
+            return .shellHighlight
+        case "S":
+            return .shell
+        case "D":
+            return .shellShadow
+        case "B":
+            return .belly
+        case "T":
+            return .bellyShadow
+        case "E":
+            return .eyeWhite
+        case "P":
+            return .eyePupil
+        default:
+            return nil
+        }
     }
 
     private static func normalizedIndex(for tick: Int, count: Int) -> Int {
@@ -272,27 +409,75 @@ enum PixelLobsterSprite {
         return remainder >= 0 ? remainder : remainder + count
     }
 
-    private static func pixelSort(lhs: Pixel, rhs: Pixel) -> Bool {
-        if lhs.y != rhs.y { return lhs.y < rhs.y }
-        if lhs.x != rhs.x { return lhs.x < rhs.x }
-        return lhs.isBodyPixel && !rhs.isBodyPixel
-    }
+    private static func markerPixels(for state: CodexState) -> [Pixel] {
+        let rows: [String] = switch state {
+        case .idle:
+            [
+                "SSS..",
+                "...S.",
+                "..S..",
+                ".....",
+                "....."
+            ]
+        case .typing:
+            [
+                ".....",
+                ".....",
+                ".S.S.",
+                ".....",
+                "....."
+            ]
+        case .running:
+            [
+                "..SS.",
+                ".S...",
+                "..S..",
+                "...S.",
+                ".SS.."
+            ]
+        case .awaitingReply:
+            [
+                "..S..",
+                "...S.",
+                "..S..",
+                ".....",
+                "..S.."
+            ]
+        case .awaitingApproval:
+            [
+                "..S..",
+                "..S..",
+                "..S..",
+                ".....",
+                "..S.."
+            ]
+        case .success:
+            [
+                "..S..",
+                ".S.S.",
+                "..S..",
+                ".S.S.",
+                "..S.."
+            ]
+        case .error:
+            [
+                "S...S",
+                "..S..",
+                "..S..",
+                "..S..",
+                "S...S"
+            ]
+        }
 
-    private static func makeRenderBounds() -> Bounds {
-        let allPixels = bodyPixels
-            + idleFrames.flatMap { $0 }
-            + runningFrames.flatMap { $0 }
-            + successFrames.flatMap { $0 }
-            + errorFrames.flatMap { $0 }
-
-        let xs = allPixels.map(\.x)
-        let ys = allPixels.map(\.y)
-
-        return Bounds(
-            minX: xs.min() ?? 0,
-            maxX: xs.max() ?? 0,
-            minY: ys.min() ?? 0,
-            maxY: ys.max() ?? 0
-        )
+        return rows.enumerated().flatMap { rowIndex, row in
+            Array(row).enumerated().compactMap { element -> Pixel? in
+                guard let role = role(for: element.element) else { return nil }
+                return Pixel(
+                    x: markerMinX + markerOffsetX + element.offset,
+                    y: markerMinY + rowIndex,
+                    role: role
+                )
+            }
+        }
     }
 }
