@@ -36,10 +36,14 @@ enum PixelLobsterSprite {
     private static let frameSize = 11
     private static let markerSize = 5
     private static let markerGap = 3
+    // 让符号整体更靠近龙虾本体，但不改龙虾的像素坐标。
     private static let markerOffsetX = 2
     private static let markerMinX = -(markerSize + markerGap)
     private static let markerMinY = 3
     static let gridSize = frameSize
+    static let markerOriginX = markerMinX + markerOffsetX
+    static let markerOriginY = markerMinY
+    static let markerGridSize = markerSize
     static let renderBounds = Bounds(minX: markerMinX, maxX: frameSize - 1, minY: 0, maxY: frameSize - 1)
 
     static func pixels(for state: CodexState, tick: Int) -> [Pixel] {

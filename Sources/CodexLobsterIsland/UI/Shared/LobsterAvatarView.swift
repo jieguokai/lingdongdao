@@ -9,8 +9,11 @@ struct LobsterAvatarView: View {
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 24.0)) { context in
             let timelinePhase = context.date.timeIntervalSinceReferenceDate
-            let pixels = PixelLobsterSprite.pixels(for: state, tick: frameTick(for: timelinePhase))
-            let bounds = PixelLobsterSprite.renderBounds
+            let renderedSprite = reducedSprite(
+                from: PixelLobsterSprite.pixels(for: state, tick: frameTick(for: timelinePhase)),
+                bounds: PixelLobsterSprite.renderBounds,
+                factor: 2
+            )
             let interaction = InteractionStyle.lobster(
                 for: interactionPhase,
                 animationsEnabled: animationsEnabled
@@ -29,20 +32,21 @@ struct LobsterAvatarView: View {
                 GeometryReader { proxy in
                     let availableWidth = max(proxy.size.width - (contentPadding * 2), 1)
                     let availableHeight = max(proxy.size.height - (contentPadding * 2), 1)
-                    let spriteWidth = CGFloat(bounds.width)
-                    let spriteHeight = CGFloat(bounds.height)
+                    let spriteWidth = CGFloat(renderedSprite.bounds.width)
+                    let spriteHeight = CGFloat(renderedSprite.bounds.height)
                     let pixel = min(availableWidth / spriteWidth, availableHeight / spriteHeight)
                     let xInset = contentPadding + ((availableWidth - (spriteWidth * pixel)) / 2)
                     let yInset = contentPadding + ((availableHeight - (spriteHeight * pixel)) / 2)
+                    // 整体降一档分辨率后，再把单个像素块略微缩小，保留像素之间的缝隙。
+                    let pixelBlock = pixel * 0.82
 
-                    ForEach(pixels) { square in
-                        let renderScale: CGFloat = square.x < 0 ? 2.0 : 1.0
+                    ForEach(renderedSprite.pixels) { square in
                         Rectangle()
                             .fill(color(for: square))
-                            .frame(width: pixel * renderScale, height: pixel * renderScale)
+                            .frame(width: pixelBlock, height: pixelBlock)
                             .position(
-                                x: xInset + (CGFloat(square.x - bounds.minX) + 0.5) * pixel,
-                                y: yInset + (CGFloat(square.y - bounds.minY) + 0.5) * pixel
+                                x: xInset + (CGFloat(square.x - renderedSprite.bounds.minX) + 0.5) * pixel,
+                                y: yInset + (CGFloat(square.y - renderedSprite.bounds.minY) + 0.5) * pixel
                             )
                     }
                 }
@@ -139,6 +143,73 @@ struct LobsterAvatarView: View {
         guard animationsEnabled else { return 0 }
         return Int((phase * PixelLobsterSprite.tickRate(for: state)).rounded(.down))
     }
+
+    private func reducedSprite(
+        from pixels: [PixelLobsterSprite.Pixel],
+        bounds: PixelLobsterSprite.Bounds,
+        factor: Int
+    ) -> ReducedSprite {
+        let safeFactor = max(factor, 1)
+        var reduced: [BucketKey: PixelLobsterSprite.Pixel] = [:]
+
+        for pixel in pixels {
+            let bucket = BucketKey(
+                x: (pixel.x - bounds.minX) / safeFactor,
+                y: (pixel.y - bounds.minY) / safeFactor
+            )
+
+            if let current = reduced[bucket] {
+                if rolePriority(pixel.role) >= rolePriority(current.role) {
+                    reduced[bucket] = pixel
+                }
+            } else {
+                reduced[bucket] = pixel
+            }
+        }
+
+        let reducedPixels = reduced.map { entry in
+            PixelLobsterSprite.Pixel(
+                x: entry.key.x,
+                y: entry.key.y,
+                role: entry.value.role
+            )
+        }
+
+        let reducedBounds = PixelLobsterSprite.Bounds(
+            minX: 0,
+            maxX: max((bounds.width - 1) / safeFactor, 0),
+            minY: 0,
+            maxY: max((bounds.height - 1) / safeFactor, 0)
+        )
+
+        return ReducedSprite(
+            pixels: reducedPixels.sorted { lhs, rhs in
+                lhs.y == rhs.y ? lhs.x < rhs.x : lhs.y < rhs.y
+            },
+            bounds: reducedBounds
+        )
+    }
+
+    private func rolePriority(_ role: PixelLobsterSprite.Pixel.Role) -> Int {
+        switch role {
+        case .outline:
+            return 7
+        case .eyeWhite:
+            return 6
+        case .eyePupil:
+            return 5
+        case .shellHighlight:
+            return 4
+        case .shell:
+            return 3
+        case .shellShadow:
+            return 2
+        case .belly:
+            return 1
+        case .bellyShadow:
+            return 0
+        }
+    }
 }
 
 private struct LobsterPalette {
@@ -147,4 +218,14 @@ private struct LobsterPalette {
     let shellShadow: Color
     let belly: Color
     let bellyShadow: Color
+}
+
+private struct ReducedSprite {
+    let pixels: [PixelLobsterSprite.Pixel]
+    let bounds: PixelLobsterSprite.Bounds
+}
+
+private struct BucketKey: Hashable {
+    let x: Int
+    let y: Int
 }
